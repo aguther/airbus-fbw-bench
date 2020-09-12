@@ -2,10 +2,17 @@
 #include "SimConnect.h"
 
 #include <QDebug>
+#include <cmath>
 
 MainController::MainController() {
   updateTimer = new QTimer(this);
-  connect(updateTimer, SIGNAL(timeout()), this, SLOT(update()));
+  updateTimer->setTimerType(Qt::PreciseTimer);
+  QObject::connect(
+      updateTimer,
+      &QTimer::timeout,
+      this,
+      &MainController::timeout
+  );
 }
 
 MainController::~MainController() {
@@ -33,7 +40,7 @@ void MainController::start() {
 
   // start update loop
   if (S_OK == result) {
-    updateTimer->start(20);
+    updateTimer->start(30);
   }
 }
 
@@ -42,6 +49,12 @@ void MainController::stop() {
   updateTimer->stop();
   // disconnect from FS2020
   SimConnect_Close(&hSimConnect);
+}
+
+void MainController::timeout() {
+  update();
+//  auto result = std::async(&MainController::update, this);
+//  result.wait();
 }
 
 void MainController::update() {
@@ -61,8 +74,8 @@ void MainController::update() {
     simConnectProcessDispatchMessage(pData, &cbData);
   }
 
-  // "process" -> here will be the update of the control laws with result
-  outputData.elevatorPosition = inputControllerData.elevatorPosition;
+  // process
+  processData();
 
   // set output data
   SimConnect_SetDataOnSimObject(
@@ -74,6 +87,50 @@ void MainController::update() {
       sizeof(outputData),
       &outputData
   );
+
+  // fire signal that data was updated
+  emit dataUpdated(
+      inputAircraftData,
+      aircraftData,
+      inputControllerData,
+      pitchLawData,
+      outputData
+  );
+}
+
+void MainController::processData() {
+  // get update time
+  auto now = QDateTime::currentDateTimeUtc();
+  aircraftData.updateTime = lastUpdateTime.msecsTo(now) / 1000.0;
+  lastUpdateTime = now;
+
+  // ******************************************************************************************************************
+
+  // correct values
+  aircraftData.gForce = inputAircraftData.gForce;
+  aircraftData.pitch = -1.0 * inputAircraftData.pitch;
+  aircraftData.bank = -1.0 * inputAircraftData.bank;
+  aircraftData.pitchRateDegreePerSecond = -1.0 * inputAircraftData
+      .pitchRateDegreePerSecond;//(aircraftData.pitch - lastAircraftData.pitch) / aircraftData.updateTime;
+  aircraftData.pitchRateRadPerSecond = aircraftData.pitchRateDegreePerSecond * DEG_TO_RAD;
+
+  // get calculated data
+  aircraftData.delta_g_force = aircraftData.gForce - lastAircraftData.gForce;
+  aircraftData.c_star = aircraftData.delta_g_force + ((240 / 9.81) * aircraftData.pitchRateRadPerSecond);
+
+  // store last aircraft data
+  lastAircraftData = aircraftData;
+
+  // ******************************************************************************************************************
+
+  // get update on law pitch data
+  pitchLawData = lawPitch.dataUpdated(aircraftData, inputControllerData);
+
+  // ******************************************************************************************************************
+
+  // get needed output values from each law data
+  outputData.elevatorPosition = pitchLawData.elevatorPosition;
+  //outputData.elevatorPosition = inputControllerData.elevatorPosition * 0.5;
 }
 
 void MainController::simConnectSetupAircraftData() const {
@@ -81,7 +138,25 @@ void MainController::simConnectSetupAircraftData() const {
       hSimConnect,
       0,
       "G Force",
-      "GForce"
+      "GFORCE"
+  );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      0,
+      "PLANE PITCH DEGREES",
+      "DEGREES"
+  );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      0,
+      "PLANE BANK DEGREES",
+      "DEGREES"
+  );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      0,
+      "ROTATION VELOCITY BODY X",
+      "DEGREES PER SECOND"
   );
 }
 
@@ -176,7 +251,7 @@ void MainController::simConnectProcessSimObjectDataByType(
   switch (simObjectDataByType->dwRequestID) {
     case 0:
       // store aircraft data
-      aircraftData = *((AircraftData *) &simObjectDataByType->dwData);
+      inputAircraftData = *((InputAircraftData *) &simObjectDataByType->dwData);
       break;
 
     default:

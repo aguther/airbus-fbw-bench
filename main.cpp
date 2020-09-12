@@ -11,12 +11,22 @@ int main(
   QApplication application(argc, argv);
 
   // create main window
-  MainWindow w;
+  MainWindow mainWindow;
   // show main window
-  w.show();
+  mainWindow.show();
 
   // create main controller
   MainController mainController;
+
+  // connect signals and slots
+  QObject::connect(
+      &mainController,
+      &MainController::dataUpdated,
+      &mainWindow,
+      &MainWindow::updateData
+  );
+
+  // start main controller
   mainController.start();
 
   // execute

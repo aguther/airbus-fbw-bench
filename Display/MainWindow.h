@@ -1,6 +1,7 @@
 #pragma once
 
-#include "DataDefinition.h"
+#include "Controller/DataDefinition.h"
+#include "Pitch/LawPitch.h"
 
 #include <QMainWindow>
 #include <QDateTime>
@@ -18,13 +19,18 @@ class MainWindow : public QMainWindow {
   ~MainWindow() override;
 
  public slots:
+  void buttonConnectClicked();
   void updateData(
       InputAircraftData inputAircraftData,
       AircraftData aircraftData,
       InputControllerData inputControllerData,
-      PitchLawOutputData setPointData,
+      LawPitch::Output lawPitchOutput,
       OutputData outputData
   );
+
+ signals:
+  void connect(int configurationIndex);
+  void disconnect();
 
  private:
   Ui::MainWindow *ui;

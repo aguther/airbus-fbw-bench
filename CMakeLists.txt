@@ -25,17 +25,17 @@ link_directories(
 add_executable(
         airbus-fbw-bench WIN32
         main.cpp
-        MainWindow.h
-        MainWindow.cpp
-        MainWindow.ui
-        MainController.h
-        MainController.cpp
-        DataDefinition.h
+        Display/MainWindow.h
+        Display/MainWindow.cpp
+        Display/MainWindow.ui
+        Controller/MainController.h
+        Controller/MainController.cpp
+        Controller/DataDefinition.h
         PidController/pid.h
         PidController/pid.cpp
-        ActualDemandChart.cpp
-        ActualDemandChart.h
-        LawPitch.cpp LawPitch.h)
+        Display/ActualDemandChart.cpp
+        Display/ActualDemandChart.h
+        Pitch/LawPitch.cpp Pitch/LawPitch.h)
 
 add_library(
         SimConnect.lib;

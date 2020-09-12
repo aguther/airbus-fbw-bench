@@ -1,5 +1,5 @@
-#include "MainWindow.h"
-#include "MainController.h"
+#include "Display/MainWindow.h"
+#include "Controller/MainController.h"
 
 #include <QApplication>
 
@@ -25,9 +25,21 @@ int main(
       &mainWindow,
       &MainWindow::updateData
   );
+  QObject::connect(
+      &mainWindow,
+      &MainWindow::connect,
+      &mainController,
+      &MainController::start
+  );
+  QObject::connect(
+      &mainWindow,
+      &MainWindow::disconnect,
+      &mainController,
+      &MainController::stop
+  );
 
   // start main controller
-  mainController.start();
+  //mainController.start(3);
 
   // execute
   return QApplication::exec();

@@ -15,15 +15,15 @@ void ActualDemandChart::init() {
   // setup x axis
   axisX->setTickCount(5);
   axisX->setRange(-1 * SAMPLE_COUNT_TIME_FRAME, 0);
-  axisX->setLabelsFont(QFont("Cascadia Code", 7));
+  axisX->setLabelsFont(QFont("Cascadia Code", 8));
   chartObject->addAxis(axisX, Qt::AlignBottom);
 
   // setup y axis
   axisY->setRange(-0.5, 2.5);
-  axisY->setTickCount(13);
+  axisY->setTickCount(7);
   axisY->setMinorTickCount(4);
   axisY->setLabelFormat("%+4.2f");
-  axisY->setLabelsFont(QFont("Cascadia Code", 7));
+  axisY->setLabelsFont(QFont("Cascadia Code", 8));
   chartObject->addAxis(axisY, Qt::AlignRight);
 
   // add chart to view

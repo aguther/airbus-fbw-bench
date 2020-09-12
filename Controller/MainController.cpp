@@ -11,7 +11,7 @@ MainController::MainController() {
       updateTimer,
       &QTimer::timeout,
       this,
-      &MainController::timeout
+      &MainController::update
   );
 }
 
@@ -22,7 +22,9 @@ MainController::~MainController() {
   }
 }
 
-void MainController::start() {
+void MainController::start(
+    int configurationIndex
+) {
   // connect to FS2020
   HRESULT result = SimConnect_Open(
       &hSimConnect,
@@ -30,7 +32,7 @@ void MainController::start() {
       nullptr,
       0,
       nullptr,
-      3
+      configurationIndex
   );
 
   // add data to definition
@@ -48,13 +50,7 @@ void MainController::stop() {
   // stop update loop
   updateTimer->stop();
   // disconnect from FS2020
-  SimConnect_Close(&hSimConnect);
-}
-
-void MainController::timeout() {
-  update();
-//  auto result = std::async(&MainController::update, this);
-//  result.wait();
+  SimConnect_Close(hSimConnect);
 }
 
 void MainController::update() {
@@ -93,7 +89,7 @@ void MainController::update() {
       inputAircraftData,
       aircraftData,
       inputControllerData,
-      pitchLawData,
+      lawPitchOutput,
       outputData
   );
 }
@@ -111,25 +107,25 @@ void MainController::processData() {
   aircraftData.pitch = -1.0 * inputAircraftData.pitch;
   aircraftData.bank = -1.0 * inputAircraftData.bank;
   aircraftData.pitchRateDegreePerSecond = -1.0 * inputAircraftData
-      .pitchRateDegreePerSecond;//(aircraftData.pitch - lastAircraftData.pitch) / aircraftData.updateTime;
+      .pitchRateDegreePerSecond;//(aircraftData.Pitch - lastAircraftData.Pitch) / aircraftData.updateTime;
   aircraftData.pitchRateRadPerSecond = aircraftData.pitchRateDegreePerSecond * DEG_TO_RAD;
 
-  // get calculated data
-  aircraftData.delta_g_force = aircraftData.gForce - lastAircraftData.gForce;
-  aircraftData.c_star = aircraftData.delta_g_force + ((240 / 9.81) * aircraftData.pitchRateRadPerSecond);
-
-  // store last aircraft data
-  lastAircraftData = aircraftData;
-
   // ******************************************************************************************************************
 
-  // get update on law pitch data
-  pitchLawData = lawPitch.dataUpdated(aircraftData, inputControllerData);
+  // get update on law Pitch data
+  LawPitch::Input input = {
+      aircraftData.gForce,
+      aircraftData.pitch,
+      aircraftData.bank,
+      aircraftData.pitchRateRadPerSecond,
+      inputControllerData.elevatorPosition
+  };
+  lawPitchOutput = lawPitch.dataUpdated(input);
 
-  // ******************************************************************************************************************
+// ******************************************************************************************************************
 
-  // get needed output values from each law data
-  outputData.elevatorPosition = pitchLawData.elevatorPosition;
+// get needed output values from each law data
+  outputData.elevatorPosition = lawPitchOutput.elevatorPosition;
   //outputData.elevatorPosition = inputControllerData.elevatorPosition * 0.5;
 }
 

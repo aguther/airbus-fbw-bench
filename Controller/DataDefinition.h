@@ -24,7 +24,6 @@ struct InputControllerData {
 
 struct PitchLawOutputData {
   double loadDemand;
-  double loadDemandCorrected;
   double c_star_demand;
   double elevatorPosition;
 };

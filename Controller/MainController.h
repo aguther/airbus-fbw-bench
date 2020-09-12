@@ -2,12 +2,12 @@
 
 #include "SimConnect.h"
 #include "DataDefinition.h"
-#include "LawPitch.h"
+#include "Pitch/LawPitch.h"
 
 #include <QTimer>
 #include <QDateTime>
 #include <QThread>
-#include <windows.h>
+#include <Windows.h>
 
 class MainController : public QObject {
  Q_OBJECT
@@ -15,9 +15,6 @@ class MainController : public QObject {
  public:
   MainController();
   ~MainController() override;
-
-  void start();
-  void stop();
 
  signals:
   void simConnectConnected();
@@ -27,12 +24,13 @@ class MainController : public QObject {
       InputAircraftData inputAircraftData,
       AircraftData aircraftData,
       InputControllerData inputControllerData,
-      PitchLawOutputData setPointData,
+      LawPitch::Output lawPitchOutput,
       OutputData outputData
   );
 
  public slots:
-  void timeout();
+  void start(int configurationIndex);
+  void stop();
   void update();
 
  private:
@@ -43,14 +41,13 @@ class MainController : public QObject {
   QTimer *updateTimer = nullptr;
   HANDLE hSimConnect = nullptr;
   InputAircraftData inputAircraftData = {};
-  AircraftData aircraftData;
-  AircraftData lastAircraftData = {};
+  AircraftData aircraftData = {};
   InputControllerData inputControllerData = {};
-  PitchLawOutputData pitchLawData = {};
   OutputData outputData = {};
   QDateTime lastUpdateTime;
 
   LawPitch lawPitch = LawPitch();
+  LawPitch::Output lawPitchOutput = {};
 
   void simConnectSetupAircraftData() const;
   void simConnectSetupOutputData() const;

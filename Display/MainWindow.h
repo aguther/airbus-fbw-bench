@@ -2,6 +2,7 @@
 
 #include "Controller/DataDefinition.h"
 #include "Pitch/LawPitch.h"
+#include "Roll/LawRoll.h"
 
 #include <QMainWindow>
 #include <QDateTime>
@@ -25,6 +26,7 @@ class MainWindow : public QMainWindow {
       AircraftData aircraftData,
       InputControllerData inputControllerData,
       LawPitch::Output lawPitchOutput,
+      LawRoll::Output lawRollOutput,
       OutputData outputData
   );
 

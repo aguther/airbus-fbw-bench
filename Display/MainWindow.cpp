@@ -9,7 +9,12 @@ MainWindow::MainWindow(
   ui->pitchRate->setRangeY(-15.0, 15.0);
   ui->c_star->setRangeY(-3.0, 3.0);
 
+  ui->bank->setRangeY(-67.0, 67.0);
+  ui->rollRate->setRangeY(-15.0, 15.0);
+
   ui->statusbar->setFont(QFont("Cascadia Code", 9));
+  ui->labelPitch->setFont(QFont("Cascadia Code", 9));
+  ui->labelRoll->setFont(QFont("Cascadia Code", 9));
 
   QObject::connect(
       ui->pushButtonConnect,
@@ -38,19 +43,38 @@ void MainWindow::updateData(
     AircraftData aircraftData,
     InputControllerData inputControllerData,
     LawPitch::Output lawPitchOutput,
+    LawRoll::Output lawRollOutput,
     OutputData outputData
 ) {
+  // common
+  ui->statusbar->showMessage(QString::asprintf(
+      "Update time = %4.2f s",
+      aircraftData.updateTime
+  ));
+
+  // pitch
   ui->loadFactor->updateActualDemand(aircraftData.gForce, lawPitchOutput.loadDemand);
   ui->pitchRate->updateActualDemand(aircraftData.pitchRateDegreePerSecond, aircraftData.pitchRateRadPerSecond);
   ui->c_star->updateActualDemand(lawPitchOutput.cStar, lawPitchOutput.cStarDemand);
-
-  ui->statusbar->showMessage(QString::asprintf(
-      "T=%4.2f | C*=%+4.2f | Pitch=%+4.2f | PitchRate=%+4.2f | nz=%+4.2f | nzd=%4.2f",
-      aircraftData.updateTime,
+  ui->labelPitch->setText(QString::asprintf(
+      "C*c=%+4.2f C*=%+4.2f | nzc=%+4.2f nz=%+4.2f | PR=%+4.2f°/s | P=%+4.2f°",
+      lawPitchOutput.cStarDemand,
       lawPitchOutput.cStar,
-      aircraftData.pitch,
-      aircraftData.pitchRateDegreePerSecond,
+      lawPitchOutput.loadDemand,
       aircraftData.gForce,
-      lawPitchOutput.loadDemand
+      aircraftData.pitchRateDegreePerSecond,
+      aircraftData.pitch
+  ));
+
+  // roll
+  ui->bank->updateActualDemand(aircraftData.bank, lawRollOutput.bankDemand);
+  ui->rollRate->updateActualDemand(aircraftData.rollRateDegreePerSecond, lawRollOutput.rollRateDemand);
+  ui->labelRoll->setText(QString::asprintf(
+      "Bc=%+4.2f° B=%+4.2f° | RRc=%+4.2f°/s RR=%+4.2f°/s | %+4.2f",
+      lawRollOutput.bankDemand,
+      aircraftData.bank,
+      lawRollOutput.rollRateDemand,
+      aircraftData.rollRateDegreePerSecond,
+      lawRollOutput.rollRateDemandLimiter
   ));
 }

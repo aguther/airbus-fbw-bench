@@ -3,31 +3,28 @@
 struct InputAircraftData {
   double gForce;
   double pitch;
+  double pitchRateRadPerSecond;
   double bank;
-  double pitchRateDegreePerSecond;
+  double rollRateRadPerSecond;
 };
 
 struct AircraftData {
   double updateTime;
   double gForce;
   double pitch;
-  double bank;
-  double pitchRateDegreePerSecond;
   double pitchRateRadPerSecond;
-  double delta_g_force;
-  double c_star;
+  double pitchRateDegreePerSecond;
+  double bank;
+  double rollRateRadPerSecond;
+  double rollRateDegreePerSecond;
 };
 
 struct InputControllerData {
   double elevatorPosition;
-};
-
-struct PitchLawOutputData {
-  double loadDemand;
-  double c_star_demand;
-  double elevatorPosition;
+  double aileronPosition;
 };
 
 struct OutputData {
   double elevatorPosition;
+  double aileronPosition;
 };

@@ -1,4 +1,5 @@
 #include "LawPitch.h"
+
 LawPitch::LawPitch()
     : pidController(0.03, 1, -1, 0.20, 0.005, 0.40) {
 }

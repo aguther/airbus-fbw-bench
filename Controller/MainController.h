@@ -3,6 +3,7 @@
 #include "SimConnect.h"
 #include "DataDefinition.h"
 #include "Pitch/LawPitch.h"
+#include "Roll/LawRoll.h"
 
 #include <QTimer>
 #include <QDateTime>
@@ -25,6 +26,7 @@ class MainController : public QObject {
       AircraftData aircraftData,
       InputControllerData inputControllerData,
       LawPitch::Output lawPitchOutput,
+      LawRoll::Output lawRollOutput,
       OutputData outputData
   );
 
@@ -48,6 +50,9 @@ class MainController : public QObject {
 
   LawPitch lawPitch = LawPitch();
   LawPitch::Output lawPitchOutput = {};
+
+  LawRoll lawRoll = LawRoll();
+  LawRoll::Output lawRollOutput = {};
 
   void simConnectSetupAircraftData() const;
   void simConnectSetupOutputData() const;

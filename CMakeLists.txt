@@ -35,7 +35,7 @@ add_executable(
         PidController/pid.cpp
         Display/ActualDemandChart.cpp
         Display/ActualDemandChart.h
-        Pitch/LawPitch.cpp Pitch/LawPitch.h)
+        Pitch/LawPitch.cpp Pitch/LawPitch.h Roll/LawRoll.cpp Roll/LawRoll.h)
 
 add_library(
         SimConnect.lib;

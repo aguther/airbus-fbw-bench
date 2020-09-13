@@ -50,6 +50,16 @@ void MainController::stop() {
   // stop update loop
   updateTimer->stop();
   // disconnect from FS2020
+  SimConnect_RemoveClientEvent(
+      hSimConnect,
+      0,
+      0
+  );
+  SimConnect_RemoveClientEvent(
+      hSimConnect,
+      1,
+      1
+  );
   SimConnect_Close(hSimConnect);
 }
 
@@ -90,6 +100,7 @@ void MainController::update() {
       aircraftData,
       inputControllerData,
       lawPitchOutput,
+      lawRollOutput,
       outputData
   );
 }
@@ -105,28 +116,39 @@ void MainController::processData() {
   // correct values
   aircraftData.gForce = inputAircraftData.gForce;
   aircraftData.pitch = -1.0 * inputAircraftData.pitch;
+  aircraftData.pitchRateRadPerSecond = -1.0 * inputAircraftData.pitchRateRadPerSecond;
+  aircraftData.pitchRateDegreePerSecond = aircraftData.pitchRateRadPerSecond * RAD_TO_DEG;
   aircraftData.bank = -1.0 * inputAircraftData.bank;
-  aircraftData.pitchRateDegreePerSecond = -1.0 * inputAircraftData
-      .pitchRateDegreePerSecond;//(aircraftData.Pitch - lastAircraftData.Pitch) / aircraftData.updateTime;
-  aircraftData.pitchRateRadPerSecond = aircraftData.pitchRateDegreePerSecond * DEG_TO_RAD;
+  aircraftData.rollRateRadPerSecond = -1.0 * inputAircraftData.rollRateRadPerSecond;
+  aircraftData.rollRateDegreePerSecond = aircraftData.rollRateRadPerSecond * RAD_TO_DEG;
 
   // ******************************************************************************************************************
 
-  // get update on law Pitch data
-  LawPitch::Input input = {
+  // get update on law pitch data
+  LawPitch::Input inputPitch = {
       aircraftData.gForce,
       aircraftData.pitch,
       aircraftData.bank,
       aircraftData.pitchRateRadPerSecond,
       inputControllerData.elevatorPosition
   };
-  lawPitchOutput = lawPitch.dataUpdated(input);
+  lawPitchOutput = lawPitch.dataUpdated(inputPitch);
 
-// ******************************************************************************************************************
-
-// get needed output values from each law data
+  // set output data
   outputData.elevatorPosition = lawPitchOutput.elevatorPosition;
-  //outputData.elevatorPosition = inputControllerData.elevatorPosition * 0.5;
+
+  // ******************************************************************************************************************
+
+  // get update on law roll data
+  LawRoll::Input inputRoll = {
+      aircraftData.bank,
+      aircraftData.rollRateRadPerSecond,
+      inputControllerData.aileronPosition
+  };
+  lawRollOutput = lawRoll.dataUpdated(inputRoll);
+
+  // set output data
+  outputData.aileronPosition = lawRollOutput.aileronPosition;
 }
 
 void MainController::simConnectSetupAircraftData() const {
@@ -145,14 +167,20 @@ void MainController::simConnectSetupAircraftData() const {
   SimConnect_AddToDataDefinition(
       hSimConnect,
       0,
+      "ROTATION VELOCITY BODY X",
+      "RADIANS PER SECOND"
+  );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      0,
       "PLANE BANK DEGREES",
       "DEGREES"
   );
   SimConnect_AddToDataDefinition(
       hSimConnect,
       0,
-      "ROTATION VELOCITY BODY X",
-      "DEGREES PER SECOND"
+      "ROTATION VELOCITY BODY Z",
+      "RADIANS PER SECOND"
   );
 }
 
@@ -173,6 +201,22 @@ void MainController::simConnectSetupInputControllerData() const {
       0,
       SIMCONNECT_GROUP_PRIORITY_HIGHEST_MASKABLE
   );
+  SimConnect_MapClientEventToSimEvent(
+      hSimConnect,
+      1,
+      "AXIS_AILERONS_SET"
+  );
+  SimConnect_AddClientEventToNotificationGroup(
+      hSimConnect,
+      1,
+      1,
+      TRUE
+  );
+  SimConnect_SetNotificationGroupPriority(
+      hSimConnect,
+      1,
+      SIMCONNECT_GROUP_PRIORITY_HIGHEST_MASKABLE
+  );
 }
 
 void MainController::simConnectSetupOutputData() const {
@@ -180,7 +224,13 @@ void MainController::simConnectSetupOutputData() const {
       hSimConnect,
       1,
       "ELEVATOR POSITION",
-      "Position"
+      "POSITION"
+  );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      1,
+      "AILERON POSITION",
+      "POSITION"
   );
 }
 
@@ -228,6 +278,11 @@ void MainController::simConnectProcessEvent(
     case 0:
       // store elevator position
       inputControllerData.elevatorPosition = 0 - (static_cast<long>(event->dwData) / 16384.0);
+      break;
+
+    case 1:
+      // store aileron position
+      inputControllerData.aileronPosition = 0 - (static_cast<long>(event->dwData) / 16384.0);
       break;
 
     default:

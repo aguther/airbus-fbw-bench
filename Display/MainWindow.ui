@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QTabWidget" name="tabWidget">
+     <widget class="QTabWidget" name="tab">
       <property name="currentIndex">
        <number>0</number>
       </property>
@@ -74,13 +74,32 @@
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
-         <widget class="ActualDemandChart" name="loadFactor"/>
+         <widget class="QLabel" name="labelPitch"/>
         </item>
         <item row="1" column="0">
-         <widget class="ActualDemandChart" name="pitchRate"/>
+         <widget class="ActualDemandChart" name="loadFactor"/>
         </item>
         <item row="2" column="0">
+         <widget class="ActualDemandChart" name="pitchRate"/>
+        </item>
+        <item row="3" column="0">
          <widget class="ActualDemandChart" name="c_star"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabRoll">
+       <attribute name="title">
+        <string>Roll</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelRoll"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="ActualDemandChart" name="bank"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="ActualDemandChart" name="rollRate"/>
         </item>
        </layout>
       </widget>

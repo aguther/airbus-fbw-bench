@@ -24,23 +24,51 @@
 #define _PID_H_
 
 class PIDImpl;
-class PID
-{
-    public:
-        // Kp -  proportional gain
-        // Ki -  Integral gain
-        // Kd -  derivative gain
-        // dt -  loop interval time
-        // max - maximum value of manipulated variable
-        // min - minimum value of manipulated variable
-        PID( double dt, double max, double min, double Kp, double Kd, double Ki );
+class PID {
+ public:
+  // Kp -  proportional gain
+  // Ki -  Integral gain
+  // Kd -  derivative gain
+  // dt -  loop interval time
+  // max - maximum value of manipulated variable
+  // min - minimum value of manipulated variable
+  PID(
+      double dt,
+      double max,
+      double min,
+      double Kp,
+      double Kd,
+      double Ki,
+      double errorWeightFactor
+  );
 
-        // Returns the manipulated variable given a setpoint and current process value
-        double calculate( double setpoint, double pv );
-        ~PID();
+  // Returns the manipulated variable given a setpoint and current process value
+  double calculate(double setpoint, double pv);
+  ~PID();
 
-    private:
-        PIDImpl *pimpl;
+  double getDt() const;
+  void setDt(double dt);
+
+  double getMax() const;
+  void setMax(double max);
+
+  double getMin() const;
+  void setMin(double min);
+
+  double getKp() const;
+  void setKp(double Kp);
+
+  double getKd() const;
+  void setKd(double Kd);
+
+  double getKi() const;
+  void setKi(double Ki);
+
+  double getErrorWeightFactor() const;
+  void setErrorWeightFactor(double errorWeightFactor);
+
+ private:
+  PIDImpl *pimpl;
 };
 
 #endif

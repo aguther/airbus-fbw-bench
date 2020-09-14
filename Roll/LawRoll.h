@@ -22,6 +22,16 @@ class LawRoll {
 
   LawRoll();
 
+  void setErrorFactor(
+      double factor
+  );
+
+  void setPidParameters(
+      double Kp,
+      double Ki,
+      double Kd
+  );
+
   LawRoll::Output dataUpdated(
       LawRoll::Input input
   );
@@ -32,6 +42,8 @@ class LawRoll {
   double RAD_TO_DEG = 180 / PI;
 
   PID pidController;
+
+  double directWeightFactor = 1.0;
 
   Input inputCurrent = {};
   Input inputLast = {};

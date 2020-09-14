@@ -22,6 +22,46 @@ MainWindow::MainWindow(
       this,
       &MainWindow::buttonConnectClicked
   );
+
+  QObject::connect(
+      ui->checkBoxPitch,
+      &QCheckBox::stateChanged,
+      this,
+      &MainWindow::inputMaskingCheckBoxChanged
+  );
+  QObject::connect(
+      ui->checkBoxRoll,
+      &QCheckBox::stateChanged,
+      this,
+      &MainWindow::inputMaskingCheckBoxChanged
+  );
+
+  QObject::connect(
+      ui->sliderGainPitch,
+      &QSlider::valueChanged,
+      this,
+      &MainWindow::weightFactorSliderChanged
+  );
+  QObject::connect(
+      ui->sliderGainRoll,
+      &QSlider::valueChanged,
+      this,
+      &MainWindow::weightFactorSliderChanged
+  );
+
+  QObject::connect(
+      ui->pushButtonPitchUpdate,
+      &QPushButton::clicked,
+      this,
+      &MainWindow::buttonPitchParametersUpdateClicked
+  );
+
+  QObject::connect(
+      ui->pushButtonRollUpdate,
+      &QPushButton::clicked,
+      this,
+      &MainWindow::buttonRollParametersUpdateClicked
+  );
 }
 
 MainWindow::~MainWindow() {
@@ -30,12 +70,50 @@ MainWindow::~MainWindow() {
 
 void MainWindow::buttonConnectClicked() {
   if (ui->pushButtonConnect->text() == "CONNECT") {
-    emit connect(ui->spinBoxConfigurationIndex->value());
+    emit connect(
+        ui->spinBoxConfigurationIndex->value(),
+        ui->checkBoxPitch->isChecked(),
+        ui->checkBoxRoll->isChecked()
+    );
     ui->pushButtonConnect->setText("DISCONNECT");
   } else {
     emit disconnect();
     ui->pushButtonConnect->setText("CONNECT");
   }
+}
+
+void MainWindow::buttonPitchParametersUpdateClicked() {
+  emit pitchParametersChanged(
+      ui->spinBoxPitchKp->value(),
+      ui->spinBoxPitchKi->value(),
+      ui->spinBoxPitchKd->value()
+  );
+}
+
+void MainWindow::buttonRollParametersUpdateClicked() {
+  emit rollParametersChanged(
+      ui->spinBoxRollKp->value(),
+      ui->spinBoxRollKi->value(),
+      ui->spinBoxRollKd->value()
+  );
+}
+
+void MainWindow::inputMaskingCheckBoxChanged(
+    int state
+) {
+  emit inputMaskingChanged(
+      ui->checkBoxPitch->isChecked(),
+      ui->checkBoxRoll->isChecked()
+  );
+}
+
+void MainWindow::weightFactorSliderChanged(
+    int value
+) {
+  emit weightFactorChanged(
+      double(ui->sliderGainPitch->value()) / 100.0,
+      double(ui->sliderGainRoll->value()) / 100.0
+  );
 }
 
 void MainWindow::updateData(

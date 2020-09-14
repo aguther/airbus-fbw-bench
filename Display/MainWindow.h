@@ -16,11 +16,27 @@ class MainWindow : public QMainWindow {
  Q_OBJECT
 
  public:
-  explicit MainWindow(QWidget *parent = nullptr);
+  explicit MainWindow(
+      QWidget *parent = nullptr
+  );
+
   ~MainWindow() override;
 
  public slots:
   void buttonConnectClicked();
+
+  void buttonPitchParametersUpdateClicked();
+
+  void buttonRollParametersUpdateClicked();
+
+  void inputMaskingCheckBoxChanged(
+      int state
+  );
+
+  void weightFactorSliderChanged(
+      int value
+  );
+
   void updateData(
       InputAircraftData inputAircraftData,
       AircraftData aircraftData,
@@ -31,8 +47,35 @@ class MainWindow : public QMainWindow {
   );
 
  signals:
-  void connect(int configurationIndex);
+  void connect(
+      int configurationIndex,
+      bool isPitchEnabled,
+      bool isRollEnabled
+  );
+
   void disconnect();
+
+  void inputMaskingChanged(
+      bool isPitchEnabled,
+      bool isRollEnabled
+  );
+
+  void weightFactorChanged(
+      double pitch,
+      double roll
+  );
+
+  void pitchParametersChanged(
+      double Kp,
+      double Ki,
+      double Kd
+  );
+
+  void rollParametersChanged(
+      double Kp,
+      double Ki,
+      double Kd
+  );
 
  private:
   Ui::MainWindow *ui;

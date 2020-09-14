@@ -25,6 +25,16 @@ class LawPitch {
 
   LawPitch();
 
+  void setErrorFactor(
+      double factor
+  );
+
+  void LawPitch::setPidParameters(
+      double Kp,
+      double Ki,
+      double Kd
+  );
+
   LawPitch::Output dataUpdated(
       LawPitch::Input input
   );
@@ -35,6 +45,8 @@ class LawPitch {
   double RAD_TO_DEG = 180 / PI;
 
   PID pidController;
+
+  double directWeightFactor = 1.0;
 
   Input inputCurrent = {};
   Input inputLast = {};

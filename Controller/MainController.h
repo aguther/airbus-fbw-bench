@@ -15,12 +15,16 @@ class MainController : public QObject {
 
  public:
   MainController();
+
   ~MainController() override;
 
  signals:
   void simConnectConnected();
+
   void simConnectDisconnected();
+
   void simConnectFailed();
+
   void dataUpdated(
       InputAircraftData inputAircraftData,
       AircraftData aircraftData,
@@ -31,9 +35,37 @@ class MainController : public QObject {
   );
 
  public slots:
-  void start(int configurationIndex);
+  void start(
+      int configurationIndex,
+      bool isPitchAxisMasked,
+      bool isRollAxisMasked
+  );
+
   void stop();
+
   void update();
+
+  void inputMaskingChanged(
+      bool isPitchEnabled,
+      bool isRollEnabled
+  );
+
+  void weightFactorChanged(
+      double pitch,
+      double roll
+  );
+
+  void pitchParametersChanged(
+      double Kp,
+      double Ki,
+      double Kd
+  );
+
+  void rollParametersChanged(
+      double Kp,
+      double Ki,
+      double Kd
+  );
 
  private:
   double PI = 2 * acos(0.0);
@@ -44,9 +76,15 @@ class MainController : public QObject {
   HANDLE hSimConnect = nullptr;
   InputAircraftData inputAircraftData = {};
   AircraftData aircraftData = {};
+  AircraftData aircraftDataLast = {};
   InputControllerData inputControllerData = {};
   OutputData outputData = {};
   QDateTime lastUpdateTime;
+
+  bool isConnected = false;
+
+  bool isPitchAxisMasked = false;
+  bool isRollAxisMasked = false;
 
   LawPitch lawPitch = LawPitch();
   LawPitch::Output lawPitchOutput = {};
@@ -56,9 +94,12 @@ class MainController : public QObject {
 
   void simConnectSetupAircraftData() const;
   void simConnectSetupOutputData() const;
-  void simConnectSetupInputControllerData() const;
   void simConnectProcessDispatchMessage(SIMCONNECT_RECV *pData, DWORD *cbData);
   void simConnectProcessEvent(const SIMCONNECT_RECV *pData);
   void simConnectProcessSimObjectDataByType(const SIMCONNECT_RECV *pData);
+  void simConnectMaskPitchAxis();
+  void simConnectUnmaskPitchAxis();
+  void simConnectMaskRollAxis();
+  void simConnectUnmaskRollAxis();
   void processData();
 };

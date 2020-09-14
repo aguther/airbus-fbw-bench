@@ -25,12 +25,14 @@ int main(
       &mainWindow,
       &MainWindow::updateData
   );
+
   QObject::connect(
       &mainWindow,
       &MainWindow::connect,
       &mainController,
       &MainController::start
   );
+
   QObject::connect(
       &mainWindow,
       &MainWindow::disconnect,
@@ -38,9 +40,40 @@ int main(
       &MainController::stop
   );
 
-  // start main controller
-  //mainController.start(3);
+  QObject::connect(
+      &mainWindow,
+      &MainWindow::inputMaskingChanged,
+      &mainController,
+      &MainController::inputMaskingChanged
+  );
+
+  QObject::connect(
+      &mainWindow,
+      &MainWindow::weightFactorChanged,
+      &mainController,
+      &MainController::weightFactorChanged
+  );
+
+  QObject::connect(
+      &mainWindow,
+      &MainWindow::pitchParametersChanged,
+      &mainController,
+      &MainController::pitchParametersChanged
+  );
+
+  QObject::connect(
+      &mainWindow,
+      &MainWindow::rollParametersChanged,
+      &mainController,
+      &MainController::rollParametersChanged
+  );
 
   // execute
-  return QApplication::exec();
+  int result = QApplication::exec();
+
+  // ensure everything is stopped
+  mainController.stop();
+
+  // return
+  return result;
 }

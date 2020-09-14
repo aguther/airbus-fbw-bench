@@ -1,7 +1,32 @@
 #include "LawPitch.h"
 
 LawPitch::LawPitch()
-    : pidController(0.03, 1, -1, 0.20, 0.005, 0.40) {
+    : pidController(
+    0.03,
+    1,
+    -1,
+    0.20,
+    0.005,
+    0.40,
+    0.0
+) {
+}
+
+void LawPitch::setErrorFactor(
+    double factor
+) {
+  pidController.setErrorWeightFactor(factor);
+  directWeightFactor = 1.0 - factor;
+}
+
+void LawPitch::setPidParameters(
+    double Kp,
+    double Ki,
+    double Kd
+) {
+  pidController.setKp(Kp);
+  pidController.setKi(Ki);
+  pidController.setKd(Kd);
 }
 
 LawPitch::Output LawPitch::dataUpdated(
@@ -25,6 +50,8 @@ LawPitch::Output LawPitch::dataUpdated(
 
   // feed pid controller and calculate elevator position
   outputCurrent.elevatorPosition = pidController.calculate(outputCurrent.cStarDemand, outputCurrent.cStar);
+  // add weighted direct control
+  outputCurrent.elevatorPosition += directWeightFactor * inputCurrent.stickDeflection;
 
   // store input and output for next iteration
   inputLast = inputCurrent;

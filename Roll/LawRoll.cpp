@@ -2,7 +2,32 @@
 #include <cmath>
 
 LawRoll::LawRoll()
-    : pidController(0.03, 1, -1, 10.00, 0.20, 4.00) {
+    : pidController(
+    0.03,
+    1,
+    -1,
+    2.00,
+    0.20,
+    1.00,
+    0.0
+) {
+}
+
+void LawRoll::setErrorFactor(
+    double factor
+) {
+  pidController.setErrorWeightFactor(factor);
+  directWeightFactor = 1.0 - factor;
+}
+
+void LawRoll::setPidParameters(
+    double Kp,
+    double Ki,
+    double Kd
+) {
+  pidController.setKp(Kp);
+  pidController.setKi(Ki);
+  pidController.setKd(Kd);
 }
 
 LawRoll::Output LawRoll::dataUpdated(
@@ -26,6 +51,8 @@ LawRoll::Output LawRoll::dataUpdated(
       outputCurrent.rollRateDemand * DEG_TO_RAD,
       input.rollRateRadPerSecond
   );
+  // add weighted direct control
+  outputCurrent.aileronPosition += directWeightFactor * inputCurrent.stickDeflection;
 
   // store input and output for next iteration
   inputLast = inputCurrent;

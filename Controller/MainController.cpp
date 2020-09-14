@@ -23,7 +23,9 @@ MainController::~MainController() {
 }
 
 void MainController::start(
-    int configurationIndex
+    int configurationIndex,
+    bool isPitchAxisMasked,
+    bool isRollAxisMasked
 ) {
   // connect to FS2020
   HRESULT result = SimConnect_Open(
@@ -35,13 +37,13 @@ void MainController::start(
       configurationIndex
   );
 
-  // add data to definition
-  simConnectSetupAircraftData();
-  simConnectSetupInputControllerData();
-  simConnectSetupOutputData();
-
-  // start update loop
   if (S_OK == result) {
+    isConnected = true;
+    // add data to definition
+    simConnectSetupAircraftData();
+    inputMaskingChanged(isPitchAxisMasked, isRollAxisMasked);
+    simConnectSetupOutputData();
+    // start update loop
     updateTimer->start(30);
   }
 }
@@ -50,17 +52,15 @@ void MainController::stop() {
   // stop update loop
   updateTimer->stop();
   // disconnect from FS2020
-  SimConnect_RemoveClientEvent(
-      hSimConnect,
-      0,
-      0
-  );
-  SimConnect_RemoveClientEvent(
-      hSimConnect,
-      1,
-      1
-  );
-  SimConnect_Close(hSimConnect);
+  if (isConnected) {
+    // unmask input
+    simConnectUnmaskPitchAxis();
+    simConnectUnmaskRollAxis();
+    // close connection
+    SimConnect_Close(hSimConnect);
+    // set flag
+    isConnected = false;
+  }
 }
 
 void MainController::update() {
@@ -117,10 +117,14 @@ void MainController::processData() {
   aircraftData.gForce = inputAircraftData.gForce;
   aircraftData.pitch = -1.0 * inputAircraftData.pitch;
   aircraftData.pitchRateRadPerSecond = -1.0 * inputAircraftData.pitchRateRadPerSecond;
+  aircraftData.pitchRateRadPerSecond = (aircraftData.pitch - aircraftDataLast.pitch) / 0.03 * DEG_TO_RAD;
   aircraftData.pitchRateDegreePerSecond = aircraftData.pitchRateRadPerSecond * RAD_TO_DEG;
   aircraftData.bank = -1.0 * inputAircraftData.bank;
   aircraftData.rollRateRadPerSecond = -1.0 * inputAircraftData.rollRateRadPerSecond;
   aircraftData.rollRateDegreePerSecond = aircraftData.rollRateRadPerSecond * RAD_TO_DEG;
+
+  // remember aircraft data
+  aircraftDataLast = aircraftData;
 
   // ******************************************************************************************************************
 
@@ -181,41 +185,6 @@ void MainController::simConnectSetupAircraftData() const {
       0,
       "ROTATION VELOCITY BODY Z",
       "RADIANS PER SECOND"
-  );
-}
-
-void MainController::simConnectSetupInputControllerData() const {
-  SimConnect_MapClientEventToSimEvent(
-      hSimConnect,
-      0,
-      "AXIS_ELEVATOR_SET"
-  );
-  SimConnect_AddClientEventToNotificationGroup(
-      hSimConnect,
-      0,
-      0,
-      TRUE
-  );
-  SimConnect_SetNotificationGroupPriority(
-      hSimConnect,
-      0,
-      SIMCONNECT_GROUP_PRIORITY_HIGHEST_MASKABLE
-  );
-  SimConnect_MapClientEventToSimEvent(
-      hSimConnect,
-      1,
-      "AXIS_AILERONS_SET"
-  );
-  SimConnect_AddClientEventToNotificationGroup(
-      hSimConnect,
-      1,
-      1,
-      TRUE
-  );
-  SimConnect_SetNotificationGroupPriority(
-      hSimConnect,
-      1,
-      SIMCONNECT_GROUP_PRIORITY_HIGHEST_MASKABLE
   );
 }
 
@@ -310,4 +279,135 @@ void MainController::simConnectProcessSimObjectDataByType(
       QTextStream(stdout) << "Unknown request id received (" << simObjectDataByType->dwRequestID << ")" << Qt::endl;
       break;
   }
+}
+
+void MainController::simConnectMaskPitchAxis() {
+  if (!isConnected) {
+    return;
+  }
+
+  if (!isPitchAxisMasked) {
+    SimConnect_MapClientEventToSimEvent(
+        hSimConnect,
+        0,
+        "AXIS_ELEVATOR_SET"
+    );
+
+    SimConnect_AddClientEventToNotificationGroup(
+        hSimConnect,
+        0,
+        0,
+        TRUE
+    );
+
+    SimConnect_SetNotificationGroupPriority(
+        hSimConnect,
+        0,
+        SIMCONNECT_GROUP_PRIORITY_HIGHEST_MASKABLE
+    );
+
+    isPitchAxisMasked = true;
+  }
+}
+
+void MainController::simConnectUnmaskPitchAxis() {
+  if (!isConnected) {
+    return;
+  }
+
+  if (isPitchAxisMasked) {
+    SimConnect_RemoveClientEvent(
+        hSimConnect,
+        0,
+        0
+    );
+
+    isPitchAxisMasked = false;
+  }
+}
+
+void MainController::simConnectMaskRollAxis() {
+  if (!isConnected) {
+    return;
+  }
+
+  if (!isRollAxisMasked) {
+    SimConnect_MapClientEventToSimEvent(
+        hSimConnect,
+        1,
+        "AXIS_AILERONS_SET"
+    );
+
+    SimConnect_AddClientEventToNotificationGroup(
+        hSimConnect,
+        1,
+        1,
+        TRUE
+    );
+
+    SimConnect_SetNotificationGroupPriority(
+        hSimConnect,
+        1,
+        SIMCONNECT_GROUP_PRIORITY_HIGHEST_MASKABLE
+    );
+
+    isRollAxisMasked = true;
+  }
+}
+
+void MainController::simConnectUnmaskRollAxis() {
+  if (!isConnected) {
+    return;
+  }
+
+  if (isRollAxisMasked) {
+    SimConnect_RemoveClientEvent(
+        hSimConnect,
+        1,
+        1
+    );
+
+    isRollAxisMasked = false;
+  }
+}
+
+void MainController::inputMaskingChanged(
+    bool isPitchEnabled,
+    bool isRollEnabled
+) {
+  if (isPitchEnabled) {
+    simConnectMaskPitchAxis();
+  } else {
+    simConnectUnmaskPitchAxis();
+  }
+
+  if (isRollEnabled) {
+    simConnectMaskRollAxis();
+  } else {
+    simConnectUnmaskRollAxis();
+  }
+}
+
+void MainController::weightFactorChanged(
+    double pitch,
+    double roll
+) {
+  lawPitch.setErrorFactor(pitch);
+  lawRoll.setErrorFactor(roll);
+}
+
+void MainController::pitchParametersChanged(
+    double Kp,
+    double Ki,
+    double Kd
+) {
+  lawPitch.setPidParameters(Kp, Ki, Kd);
+}
+
+void MainController::rollParametersChanged(
+    double Kp,
+    double Ki,
+    double Kd
+) {
+  lawRoll.setPidParameters(Kp, Ki, Kd);
 }

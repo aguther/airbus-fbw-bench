@@ -1,32 +1,32 @@
 #include "LawPitch.h"
 
 LawPitch::LawPitch()
-    : pidController(
-    0.03,
-    1,
-    -1,
-    0.20,
-    0.005,
-    0.40,
-    0.0
-) {
+    : pidControllerPitchRate(SAMPLE_TIME, 1, -1, 0.20, 0.005, 0.40, 0.0),
+      pidControllerLoadDemand(SAMPLE_TIME, 10, -10, 1.0, 0.0, 0.0, 0.0) {
 }
 
 void LawPitch::setErrorFactor(
     double factor
 ) {
-  pidController.setErrorWeightFactor(factor);
+  pidControllerPitchRate.setErrorWeightFactor(factor);
+  pidControllerLoadDemand.setErrorWeightFactor(factor);
   directWeightFactor = 1.0 - factor;
 }
 
 void LawPitch::setPidParameters(
-    double Kp,
-    double Ki,
-    double Kd
+    double pitchRateKp,
+    double pitchRateKi,
+    double pitchRateKd,
+    double loadDemandKp,
+    double loadDemandKi,
+    double loadDemandKd
 ) {
-  pidController.setKp(Kp);
-  pidController.setKi(Ki);
-  pidController.setKd(Kd);
+  pidControllerPitchRate.setKp(pitchRateKp);
+  pidControllerPitchRate.setKi(pitchRateKi);
+  pidControllerPitchRate.setKd(pitchRateKd);
+  pidControllerLoadDemand.setKp(loadDemandKp);
+  pidControllerLoadDemand.setKi(loadDemandKi);
+  pidControllerLoadDemand.setKd(loadDemandKd);
 }
 
 LawPitch::Output LawPitch::dataUpdated(
@@ -48,8 +48,18 @@ LawPitch::Output LawPitch::dataUpdated(
   // calculate C* rule
   outputCurrent.cStarDemand = 3.0 * inputCurrent.stickDeflection * pitchBankCompensation;
 
-  // feed pid controller and calculate elevator position
-  outputCurrent.elevatorPosition = pidController.calculate(outputCurrent.cStarDemand, outputCurrent.cStar);
+  // feed pid controller for load demand -> pitch rate demand
+//  outputCurrent.pitchRateDemand = pidControllerLoadDemand.calculate(
+//      outputCurrent.loadDemand,
+//      inputCurrent.gForce
+//  );
+
+  // feed pid controller for pitch rate -> elevator position
+  outputCurrent.elevatorPosition = pidControllerPitchRate.calculate(
+      outputCurrent.cStarDemand,
+      outputCurrent.cStar
+  );
+
   // add weighted direct control
   outputCurrent.elevatorPosition += directWeightFactor * inputCurrent.stickDeflection;
 

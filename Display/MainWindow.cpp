@@ -84,17 +84,23 @@ void MainWindow::buttonConnectClicked() {
 
 void MainWindow::buttonPitchParametersUpdateClicked() {
   emit pitchParametersChanged(
-      ui->spinBoxPitchKp->value(),
-      ui->spinBoxPitchKi->value(),
-      ui->spinBoxPitchKd->value()
+      ui->spinBoxPitchRateKp->value(),
+      ui->spinBoxPitchRateKi->value(),
+      ui->spinBoxPitchRateKd->value(),
+      ui->spinBoxPitchLoadDemandKp->value(),
+      ui->spinBoxPitchLoadDemandKi->value(),
+      ui->spinBoxPitchLoadDemandKd->value()
   );
 }
 
 void MainWindow::buttonRollParametersUpdateClicked() {
   emit rollParametersChanged(
-      ui->spinBoxRollKp->value(),
-      ui->spinBoxRollKi->value(),
-      ui->spinBoxRollKd->value()
+      ui->spinBoxRollRateKp->value(),
+      ui->spinBoxRollRateKi->value(),
+      ui->spinBoxRollRateKd->value(),
+      ui->spinBoxRollBankKp->value(),
+      ui->spinBoxRollBankKi->value(),
+      ui->spinBoxRollBankKd->value()
   );
 }
 
@@ -132,7 +138,7 @@ void MainWindow::updateData(
 
   // pitch
   ui->loadFactor->updateActualDemand(aircraftData.gForce, lawPitchOutput.loadDemand);
-  ui->pitchRate->updateActualDemand(aircraftData.pitchRateDegreePerSecond, aircraftData.pitchRateRadPerSecond);
+  ui->pitchRate->updateActualDemand(aircraftData.pitchRateDegreePerSecond, lawPitchOutput.pitchRateDemand);
   ui->c_star->updateActualDemand(lawPitchOutput.cStar, lawPitchOutput.cStarDemand);
   ui->labelPitch->setText(QString::asprintf(
       "C*c=%+4.2f C*=%+4.2f | nzc=%+4.2f nz=%+4.2f | PR=%+4.2f°/s | P=%+4.2f°",

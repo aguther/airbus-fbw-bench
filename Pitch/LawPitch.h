@@ -18,6 +18,7 @@ class LawPitch {
   struct Output {
     double gForceDelta;
     double cStar;
+    double pitchRateDemand;
     double loadDemand;
     double cStarDemand;
     double elevatorPosition;
@@ -30,9 +31,12 @@ class LawPitch {
   );
 
   void LawPitch::setPidParameters(
-      double Kp,
-      double Ki,
-      double Kd
+      double pitchRateKp,
+      double pitchRateKi,
+      double pitchRateKd,
+      double loadDemandKp,
+      double loadDemandKi,
+      double loadDemandKd
   );
 
   LawPitch::Output dataUpdated(
@@ -40,11 +44,13 @@ class LawPitch {
   );
 
  private:
+  double SAMPLE_TIME = 0.03;
   double PI = 2 * acos(0.0);
   double DEG_TO_RAD = PI / 180.0;
   double RAD_TO_DEG = 180 / PI;
 
-  PID pidController;
+  PID pidControllerPitchRate;
+  PID pidControllerLoadDemand;
 
   double directWeightFactor = 1.0;
 

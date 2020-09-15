@@ -6,9 +6,9 @@ LawRoll::LawRoll()
     0.03,
     1,
     -1,
-    2.00,
+    10.00,
     0.20,
-    1.00,
+    4.00,
     0.0
 ) {
 }
@@ -39,9 +39,9 @@ LawRoll::Output LawRoll::dataUpdated(
   // calculate load demand depending on sidestick position
   outputCurrent.rollRateDemand = 15 * inputCurrent.stickDeflection;
 
-  outputCurrent.rollRateDemandLimiter = (abs(inputCurrent.bank) - 33) * (15.0 / 34.0);
+  outputCurrent.rollRateDemandLimiter = (abs(inputCurrent.bank) - 33.0) * (15.0 / 34.0);
   outputCurrent.rollRateDemandLimiter = fmax(0, outputCurrent.rollRateDemandLimiter);
-  copysign(outputCurrent.rollRateDemandLimiter, inputCurrent.bank);
+  outputCurrent.rollRateDemandLimiter = copysign(outputCurrent.rollRateDemandLimiter, inputCurrent.bank);
   outputCurrent.rollRateDemandLimiter *= -1;
 
   outputCurrent.rollRateDemand += outputCurrent.rollRateDemandLimiter;

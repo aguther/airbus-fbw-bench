@@ -76,7 +76,6 @@ class MainController : public QObject {
   HANDLE hSimConnect = nullptr;
   InputAircraftData inputAircraftData = {};
   AircraftData aircraftData = {};
-  AircraftData aircraftDataLast = {};
   InputControllerData inputControllerData = {};
   OutputData outputData = {};
   QDateTime lastUpdateTime;

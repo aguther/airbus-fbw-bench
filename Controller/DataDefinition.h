@@ -1,11 +1,12 @@
 #pragma once
 
+#include "SimConnect.h"
+
 struct InputAircraftData {
   double gForce;
   double pitch;
-  double pitchRateRadPerSecond;
   double bank;
-  double rollRateRadPerSecond;
+  SIMCONNECT_DATA_XYZ worldRotationVelocity;
 };
 
 struct AircraftData {

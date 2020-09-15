@@ -116,15 +116,11 @@ void MainController::processData() {
   // correct values
   aircraftData.gForce = inputAircraftData.gForce;
   aircraftData.pitch = -1.0 * inputAircraftData.pitch;
-  aircraftData.pitchRateRadPerSecond = -1.0 * inputAircraftData.pitchRateRadPerSecond;
-  aircraftData.pitchRateRadPerSecond = (aircraftData.pitch - aircraftDataLast.pitch) / 0.03 * DEG_TO_RAD;
+  aircraftData.pitchRateRadPerSecond = -1.0 * inputAircraftData.worldRotationVelocity.x;
   aircraftData.pitchRateDegreePerSecond = aircraftData.pitchRateRadPerSecond * RAD_TO_DEG;
   aircraftData.bank = -1.0 * inputAircraftData.bank;
-  aircraftData.rollRateRadPerSecond = -1.0 * inputAircraftData.rollRateRadPerSecond;
+  aircraftData.rollRateRadPerSecond = -1.0 * inputAircraftData.worldRotationVelocity.z;
   aircraftData.rollRateDegreePerSecond = aircraftData.rollRateRadPerSecond * RAD_TO_DEG;
-
-  // remember aircraft data
-  aircraftDataLast = aircraftData;
 
   // ******************************************************************************************************************
 
@@ -171,20 +167,15 @@ void MainController::simConnectSetupAircraftData() const {
   SimConnect_AddToDataDefinition(
       hSimConnect,
       0,
-      "ROTATION VELOCITY BODY X",
-      "RADIANS PER SECOND"
-  );
-  SimConnect_AddToDataDefinition(
-      hSimConnect,
-      0,
       "PLANE BANK DEGREES",
       "DEGREES"
   );
   SimConnect_AddToDataDefinition(
       hSimConnect,
       0,
-      "ROTATION VELOCITY BODY Z",
-      "RADIANS PER SECOND"
+      "STRUCT WORLD ROTATION VELOCITY",
+      nullptr,
+      SIMCONNECT_DATATYPE_XYZ
   );
 }
 

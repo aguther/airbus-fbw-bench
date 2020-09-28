@@ -49,7 +49,7 @@ class LawPitch {
   double DEG_TO_RAD = PI / 180.0;
   double RAD_TO_DEG = 180 / PI;
 
-  PID pidControllerPitchRate;
+  PID pidController_cStar;
   PID pidControllerLoadDemand;
 
   double directWeightFactor = 1.0;

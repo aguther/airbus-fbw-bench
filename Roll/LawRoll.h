@@ -50,8 +50,16 @@ class LawRoll {
 
   double directWeightFactor = 1.0;
 
+  double phi_d_integral = 0.0;
+
   Input inputCurrent = {};
   Input inputLast = {};
   Output outputCurrent = {};
   Output outputLast = {};
+
+  static double limit(
+      double value,
+      double min,
+      double max
+  );
 };

@@ -216,6 +216,11 @@ double PIDImpl::calculate(
 
   // Integral term
   mIntegral += error * mDt;
+  if (mIntegral > mMax) {
+    mIntegral = mMax;
+  } else if (mIntegral < mMin) {
+    mIntegral = mMin;
+  }
   double Iout = mKi * mIntegral * mErrorWeightFactor;
 
   // Derivative term

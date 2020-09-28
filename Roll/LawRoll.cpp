@@ -36,37 +36,95 @@ LawRoll::Output LawRoll::dataUpdated(
   // store input
   inputCurrent = input;
 
+//  // calculate load demand depending on sidestick position
+//  outputCurrent.rollRateDemand = 15 * inputCurrent.stickDeflection;
+//
+//  // integrator for bank demand
+//  outputCurrent.bankDemand = limit(
+//      outputCurrent.bankDemand + (outputCurrent.rollRateDemand * SAMPLE_TIME),
+//      -66.0,
+//      +66.0
+//  );
+//
+//  // feed pid controller for bank demand -> roll rate demand
+//  outputCurrent.rollRateDemand = pidControllerBank.calculate(
+//      outputCurrent.bankDemand,
+//      inputCurrent.bank
+//  );
+//
+//  // bank angle limiter
+//  outputCurrent.rollRateDemandLimiter = (abs(inputCurrent.bank) - 33.0) * (15.0 / 33.0);
+//  outputCurrent.rollRateDemandLimiter = fmax(0, outputCurrent.rollRateDemandLimiter);
+//  outputCurrent.rollRateDemandLimiter = copysign(outputCurrent.rollRateDemandLimiter, inputCurrent.bank);
+//  outputCurrent.rollRateDemandLimiter *= -1;
+//  outputCurrent.rollRateDemand += outputCurrent.rollRateDemandLimiter;
+//
+//  // feed pid controller for roll rate -> aileron position
+//  outputCurrent.aileronPosition = pidControllerRollRate.calculate(
+//      outputCurrent.rollRateDemand * DEG_TO_RAD,
+//      input.rollRateRadPerSecond
+//  );
+
   // calculate load demand depending on sidestick position
   outputCurrent.rollRateDemand = 15 * inputCurrent.stickDeflection;
 
-  // integrator for bank demand
-  outputCurrent.bankDemand += outputCurrent.rollRateDemand * SAMPLE_TIME;
-
-  // feed pid controller for bank demand -> roll rate demand
-  outputCurrent.rollRateDemand = pidControllerBank.calculate(
-      outputCurrent.bankDemand,
-      inputCurrent.bank
-  );
-
   // bank angle limiter
-  outputCurrent.rollRateDemandLimiter = (abs(inputCurrent.bank) - 33.0) * (15.0 / 34.0);
+  outputCurrent.rollRateDemandLimiter = (abs(inputCurrent.bank) - 33.0) * (15.0 / 33.0);
   outputCurrent.rollRateDemandLimiter = fmax(0, outputCurrent.rollRateDemandLimiter);
   outputCurrent.rollRateDemandLimiter = copysign(outputCurrent.rollRateDemandLimiter, inputCurrent.bank);
   outputCurrent.rollRateDemandLimiter *= -1;
   outputCurrent.rollRateDemand += outputCurrent.rollRateDemandLimiter;
 
-  // feed pid controller for roll rate -> aileron position
-  outputCurrent.aileronPosition = pidControllerRollRate.calculate(
-      outputCurrent.rollRateDemand * DEG_TO_RAD,
-      input.rollRateRadPerSecond
+  // integrator for bank demand
+  outputCurrent.bankDemand = limit(
+      outputCurrent.bankDemand + (outputCurrent.rollRateDemand * SAMPLE_TIME),
+      -66.0,
+      +66.0
   );
+
+  double phi = inputCurrent.bank;
+  double p_k = inputCurrent.rollRateRadPerSecond;
+
+  double phi_c = outputCurrent.bankDemand;
+  double phi_d = phi - phi_c;
+
+  double k_xi_phi = pidControllerBank.getKp();
+  double j_xi_phi = pidControllerBank.getKi();
+  double h_xi_phi = pidControllerBank.getKd();
+  double k_xi_p = pidControllerRollRate.getKp();
+
+  phi_d_integral += phi_d;
+  phi_d_integral = limit(phi_d_integral, -1.0, 1.0);
+
+  // calculate output
+  double xi = (phi_c * h_xi_phi) + (phi_d * k_xi_phi) + (phi_d * j_xi_phi) + (p_k * k_xi_p);
+
+  outputCurrent.aileronPosition = (1.0 - directWeightFactor) * xi;
 
   // add weighted direct control
   outputCurrent.aileronPosition += directWeightFactor * inputCurrent.stickDeflection;
+
+  // limit output
+  outputCurrent.aileronPosition = limit(outputCurrent.aileronPosition, -1.0, 1.0);
 
   // store input and output for next iteration
   inputLast = inputCurrent;
   outputLast = outputCurrent;
 
+  outputCurrent.bankDemand = phi_c;
+
   return outputCurrent;
+}
+
+double LawRoll::limit(
+    double value,
+    double min,
+    double max
+) {
+  if (value > max) {
+    return max;
+  } else if (value < min) {
+    return min;
+  }
+  return value;
 }

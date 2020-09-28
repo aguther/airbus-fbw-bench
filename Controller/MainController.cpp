@@ -388,17 +388,34 @@ void MainController::weightFactorChanged(
 }
 
 void MainController::pitchParametersChanged(
-    double Kp,
-    double Ki,
-    double Kd
+    double pitchRateKp,
+    double pitchRateKi,
+    double pitchRateKd,
+    double loadDemandKp,
+    double loadDemandKi,
+    double loadDemandKd
 ) {
-  lawPitch.setPidParameters(Kp, Ki, Kd);
+  lawPitch.setPidParameters(
+      pitchRateKp,
+      pitchRateKi,
+      pitchRateKd
+  );
 }
 
 void MainController::rollParametersChanged(
-    double Kp,
-    double Ki,
-    double Kd
+    double rollDemandKp,
+    double rollDemandKi,
+    double rollDemandKd,
+    double bankDemandKp,
+    double bankDemandKi,
+    double bankDemandKd
 ) {
-  lawRoll.setPidParameters(Kp, Ki, Kd);
+  lawRoll.setPidParameters(
+      rollDemandKp,
+      rollDemandKi,
+      rollDemandKd,
+      bankDemandKp,
+      bankDemandKi,
+      bankDemandKd
+  );
 }

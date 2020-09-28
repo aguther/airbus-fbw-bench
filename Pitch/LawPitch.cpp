@@ -1,32 +1,24 @@
 #include "LawPitch.h"
 
 LawPitch::LawPitch()
-    : pidController(
-    0.03,
-    1,
-    -1,
-    0.20,
-    0.005,
-    0.40,
-    0.0
-) {
+    : pidController_cStar(SAMPLE_TIME, 1, -1, 0.20, 0.005, 0.40, 0.0) {
 }
 
 void LawPitch::setErrorFactor(
     double factor
 ) {
-  pidController.setErrorWeightFactor(factor);
+  pidController_cStar.setErrorWeightFactor(factor);
   directWeightFactor = 1.0 - factor;
 }
 
 void LawPitch::setPidParameters(
-    double Kp,
-    double Ki,
-    double Kd
+    double pitchRateKp,
+    double pitchRateKi,
+    double pitchRateKd
 ) {
-  pidController.setKp(Kp);
-  pidController.setKi(Ki);
-  pidController.setKd(Kd);
+  pidController_cStar.setKp(pitchRateKp);
+  pidController_cStar.setKi(pitchRateKi);
+  pidController_cStar.setKd(pitchRateKd);
 }
 
 LawPitch::Output LawPitch::dataUpdated(
@@ -48,8 +40,12 @@ LawPitch::Output LawPitch::dataUpdated(
   // calculate C* rule
   outputCurrent.cStarDemand = 3.0 * inputCurrent.stickDeflection * pitchBankCompensation;
 
-  // feed pid controller and calculate elevator position
-  outputCurrent.elevatorPosition = pidController.calculate(outputCurrent.cStarDemand, outputCurrent.cStar);
+  // feed pid controller for pitch rate -> elevator position
+  outputCurrent.elevatorPosition = pidController_cStar.calculate(
+      outputCurrent.cStarDemand,
+      outputCurrent.cStar
+  );
+
   // add weighted direct control
   outputCurrent.elevatorPosition += directWeightFactor * inputCurrent.stickDeflection;
 

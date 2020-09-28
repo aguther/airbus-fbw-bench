@@ -56,15 +56,21 @@ class MainController : public QObject {
   );
 
   void pitchParametersChanged(
-      double Kp,
-      double Ki,
-      double Kd
+      double pitchRateKp,
+      double pitchRateKi,
+      double pitchRateKd,
+      double loadDemandKp,
+      double loadDemandKi,
+      double loadDemandKd
   );
 
   void rollParametersChanged(
-      double Kp,
-      double Ki,
-      double Kd
+      double rollDemandKp,
+      double rollDemandKi,
+      double rollDemandKd,
+      double bankDemandKp,
+      double bankDemandKi,
+      double bankDemandKd
   );
 
  private:

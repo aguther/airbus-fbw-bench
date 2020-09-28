@@ -27,9 +27,12 @@ class LawRoll {
   );
 
   void setPidParameters(
-      double Kp,
-      double Ki,
-      double Kd
+      double rollDemandKp,
+      double rollDemandKi,
+      double rollDemandKd,
+      double bankDemandKp,
+      double bankDemandKi,
+      double bankDemandKd
   );
 
   LawRoll::Output dataUpdated(
@@ -37,16 +40,27 @@ class LawRoll {
   );
 
  private:
+  double SAMPLE_TIME = 0.03;
   double PI = 2 * acos(0.0);
   double DEG_TO_RAD = PI / 180.0;
   double RAD_TO_DEG = 180 / PI;
 
-  PID pidController;
-
   double directWeightFactor = 1.0;
+
+  double k_xi_phi = 0.0;
+  double j_xi_phi = -0.2;
+  double h_xi_phi = 0.0;
+  double k_xi_p = -5.0;
+  double phi_d_integral = 0.0;
 
   Input inputCurrent = {};
   Input inputLast = {};
   Output outputCurrent = {};
   Output outputLast = {};
+
+  static double limit(
+      double value,
+      double min,
+      double max
+  );
 };

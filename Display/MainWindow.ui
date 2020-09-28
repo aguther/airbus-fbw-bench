@@ -110,60 +110,78 @@
           <item>
            <widget class="QLabel" name="labelPitchKp">
             <property name="text">
-             <string>Kp</string>
+             <string>Load Demand Kp</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="spinBoxPitchKp">
+           <widget class="QDoubleSpinBox" name="spinBoxPitchLoadDemandKp">
             <property name="decimals">
              <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
             </property>
             <property name="singleStep">
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.200000000000000</double>
+             <double>1.000000000000000</double>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelPitchKi">
+           <widget class="QLabel" name="labelPitchLoadDemandKi">
             <property name="text">
-             <string>Ki</string>
+             <string>Load Demand Ki</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="spinBoxPitchKi">
+           <widget class="QDoubleSpinBox" name="spinBoxPitchLoadDemandKi">
             <property name="decimals">
              <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
             </property>
             <property name="singleStep">
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.400000000000000</double>
+             <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelPitchKd">
+           <widget class="QLabel" name="labelPitchLoadDemandKd">
             <property name="text">
-             <string>Kd</string>
+             <string>Load Demand Kd</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="spinBoxPitchKd">
+           <widget class="QDoubleSpinBox" name="spinBoxPitchLoadDemandKd">
             <property name="decimals">
              <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
             </property>
             <property name="singleStep">
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.005000000000000</double>
+             <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -177,6 +195,88 @@
          </layout>
         </item>
         <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="labelPitchRateKp">
+            <property name="text">
+             <string>C* Kp</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinBoxPitchRateKp">
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.200000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelPitchRateKi">
+            <property name="text">
+             <string>C* Ki</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinBoxPitchRateKi">
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.400000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelPitchRateKd">
+            <property name="text">
+             <string>C* Kd</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinBoxPitchRateKd">
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.005000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
          <widget class="QSlider" name="sliderGainPitch">
           <property name="maximum">
            <number>100</number>
@@ -186,16 +286,16 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="labelPitch"/>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="ActualDemandChart" name="loadFactor"/>
         </item>
-        <item row="4" column="0">
+        <item row="5" column="0">
          <widget class="ActualDemandChart" name="pitchRate"/>
         </item>
-        <item row="5" column="0">
+        <item row="6" column="0">
          <widget class="ActualDemandChart" name="c_star"/>
         </item>
        </layout>
@@ -208,62 +308,80 @@
         <item row="0" column="0">
          <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <widget class="QLabel" name="labelRollKp">
+           <widget class="QLabel" name="labelRollRateKp">
             <property name="text">
-             <string>Kp</string>
+             <string>Roll Rate Kp</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="spinBoxRollKp">
+           <widget class="QDoubleSpinBox" name="spinBoxRollRateKp">
             <property name="decimals">
              <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
             </property>
             <property name="singleStep">
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>10.000000000000000</double>
+             <double>-5.000000000000000</double>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelRollKi">
+           <widget class="QLabel" name="labelRollRateKi">
             <property name="text">
-             <string>Ki</string>
+             <string>Roll Rate Ki</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="spinBoxRollKi">
+           <widget class="QDoubleSpinBox" name="spinBoxRollRateKi">
             <property name="decimals">
              <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
             </property>
             <property name="singleStep">
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>4.000000000000000</double>
+             <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLabel" name="labelRollKd">
+           <widget class="QLabel" name="labelRollRateKd">
             <property name="text">
-             <string>Kd</string>
+             <string>Roll Rate Kd</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QDoubleSpinBox" name="spinBoxRollKd">
+           <widget class="QDoubleSpinBox" name="spinBoxRollRateKd">
             <property name="decimals">
              <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
             </property>
             <property name="singleStep">
              <double>0.010000000000000</double>
             </property>
             <property name="value">
-             <double>0.200000000000000</double>
+             <double>0.000000000000000</double>
             </property>
            </widget>
           </item>
@@ -277,6 +395,88 @@
          </layout>
         </item>
         <item row="1" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLabel" name="labelRollBankKp">
+            <property name="text">
+             <string>Bank Kp</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinBoxRollBankKp">
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelRollBankKi">
+            <property name="text">
+             <string>Bank Ki</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinBoxRollBankKi">
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="value">
+             <double>-0.200000000000000</double>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelRollBankKd">
+            <property name="text">
+             <string>Bank Kd</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QDoubleSpinBox" name="spinBoxRollBankKd">
+            <property name="decimals">
+             <number>3</number>
+            </property>
+            <property name="minimum">
+             <double>-99.989999999999995</double>
+            </property>
+            <property name="singleStep">
+             <double>0.010000000000000</double>
+            </property>
+            <property name="value">
+             <double>0.000000000000000</double>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
          <widget class="QSlider" name="sliderGainRoll">
           <property name="maximum">
            <number>100</number>
@@ -286,13 +486,13 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="labelRoll"/>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="ActualDemandChart" name="rollRate"/>
         </item>
-        <item row="4" column="0">
+        <item row="5" column="0">
          <widget class="ActualDemandChart" name="bank"/>
         </item>
        </layout>

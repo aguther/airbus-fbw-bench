@@ -45,11 +45,12 @@ class LawRoll {
   double DEG_TO_RAD = PI / 180.0;
   double RAD_TO_DEG = 180 / PI;
 
-  PID pidControllerRollRate;
-  PID pidControllerBank;
-
   double directWeightFactor = 1.0;
 
+  double k_xi_phi = 0.0;
+  double j_xi_phi = -0.2;
+  double h_xi_phi = 0.0;
+  double k_xi_p = -5.0;
   double phi_d_integral = 0.0;
 
   Input inputCurrent = {};

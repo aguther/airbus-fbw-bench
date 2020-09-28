@@ -33,10 +33,7 @@ class LawPitch {
   void LawPitch::setPidParameters(
       double pitchRateKp,
       double pitchRateKi,
-      double pitchRateKd,
-      double loadDemandKp,
-      double loadDemandKi,
-      double loadDemandKd
+      double pitchRateKd
   );
 
   LawPitch::Output dataUpdated(
@@ -50,7 +47,6 @@ class LawPitch {
   double RAD_TO_DEG = 180 / PI;
 
   PID pidController_cStar;
-  PID pidControllerLoadDemand;
 
   double directWeightFactor = 1.0;
 

@@ -1,32 +1,24 @@
 #include "LawPitch.h"
 
 LawPitch::LawPitch()
-    : pidController_cStar(SAMPLE_TIME, 1, -1, 0.20, 0.005, 0.40, 0.0),
-      pidControllerLoadDemand(SAMPLE_TIME, 10, -10, 1.0, 0.0, 0.0, 0.0) {
+    : pidController_cStar(SAMPLE_TIME, 1, -1, 0.20, 0.005, 0.40, 0.0) {
 }
 
 void LawPitch::setErrorFactor(
     double factor
 ) {
   pidController_cStar.setErrorWeightFactor(factor);
-  pidControllerLoadDemand.setErrorWeightFactor(factor);
   directWeightFactor = 1.0 - factor;
 }
 
 void LawPitch::setPidParameters(
     double pitchRateKp,
     double pitchRateKi,
-    double pitchRateKd,
-    double loadDemandKp,
-    double loadDemandKi,
-    double loadDemandKd
+    double pitchRateKd
 ) {
   pidController_cStar.setKp(pitchRateKp);
   pidController_cStar.setKi(pitchRateKi);
   pidController_cStar.setKd(pitchRateKd);
-  pidControllerLoadDemand.setKp(loadDemandKp);
-  pidControllerLoadDemand.setKi(loadDemandKi);
-  pidControllerLoadDemand.setKd(loadDemandKd);
 }
 
 LawPitch::Output LawPitch::dataUpdated(
@@ -47,12 +39,6 @@ LawPitch::Output LawPitch::dataUpdated(
 
   // calculate C* rule
   outputCurrent.cStarDemand = 3.0 * inputCurrent.stickDeflection * pitchBankCompensation;
-
-  // feed pid controller for load demand -> c* demand
-//  outputCurrent.cStarDemand = pidControllerLoadDemand.calculate(
-//      outputCurrent.loadDemand,
-//      inputCurrent.gForce
-//  );
 
   // feed pid controller for pitch rate -> elevator position
   outputCurrent.elevatorPosition = pidController_cStar.calculate(

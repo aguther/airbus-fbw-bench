@@ -398,10 +398,7 @@ void MainController::pitchParametersChanged(
   lawPitch.setPidParameters(
       pitchRateKp,
       pitchRateKi,
-      pitchRateKd,
-      loadDemandKp,
-      loadDemandKi,
-      loadDemandKd
+      pitchRateKd
   );
 }
 

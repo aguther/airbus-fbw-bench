@@ -7,7 +7,7 @@ LawRoll::LawRoll() {
 void LawRoll::setErrorFactor(
     double factor
 ) {
-  directWeightFactor = 1.0 - factor;
+  overrideWeightFactor = factor;
 }
 
 void LawRoll::setPidParameters(
@@ -30,6 +30,32 @@ LawRoll::Output LawRoll::dataUpdated(
   // store input
   inputCurrent = input;
 
+  // update flight mode weight
+  if (inputCurrent.radioHeightFeet > 0.0) {
+    // transition to flight mode
+    if ((flightModeWeightFactor < 1.0 && inputCurrent.pitch > 8.0) || inputCurrent.radioHeightFeet > 400.0) {
+      flightModeWeightFactor = limit(
+          flightModeWeightFactor + (1.0 / (0.5 / SAMPLE_TIME)),
+          0.0,
+          1.0
+      );
+    }
+  } else {
+    // transition to ground mode
+    if (flightModeWeightFactor > 0.0) {
+      flightModeWeightFactor = limit(
+          flightModeWeightFactor - (1.0 / (0.5 / SAMPLE_TIME)),
+          0.0,
+          1.0
+      );
+    }
+  }
+  flightModeWeightFactor = limit(
+      flightModeWeightFactor,
+      0.0,
+      overrideWeightFactor
+  );
+
   // calculate load demand depending on sidestick position
   outputCurrent.rollRateDemand = 15 * inputCurrent.stickDeflection;
 
@@ -47,6 +73,11 @@ LawRoll::Output LawRoll::dataUpdated(
       +66.0
   );
 
+  // in ground mode bank demand = bank
+  if (flightModeWeightFactor == 0.0) {
+    outputCurrent.bankDemand = inputCurrent.bank;
+  }
+
   double phi = inputCurrent.bank;
   double p_k = inputCurrent.rollRateRadPerSecond;
 
@@ -59,13 +90,16 @@ LawRoll::Output LawRoll::dataUpdated(
   // calculate output
   double xi = (phi_c * h_xi_phi) + (phi_d * k_xi_phi) + (phi_d * j_xi_phi) + (p_k * k_xi_p);
 
-  outputCurrent.aileronPosition = (1.0 - directWeightFactor) * xi;
+  outputCurrent.aileronPosition = flightModeWeightFactor * xi;
 
   // add weighted direct control
-  outputCurrent.aileronPosition += directWeightFactor * inputCurrent.stickDeflection;
+  outputCurrent.aileronPosition += (1.0 - flightModeWeightFactor) * inputCurrent.stickDeflection;
 
   // limit output
   outputCurrent.aileronPosition = limit(outputCurrent.aileronPosition, -1.0, 1.0);
+
+  // store flight mode factor
+  outputCurrent.flightModeWeightFactor = flightModeWeightFactor;
 
   // store input and output for next iteration
   inputLast = inputCurrent;

@@ -130,12 +130,14 @@ void MainController::processData() {
       aircraftData.pitch,
       aircraftData.bank,
       aircraftData.pitchRateRadPerSecond,
-      inputControllerData.elevatorPosition
+      inputControllerData.elevatorPosition,
+      inputAircraftData.radioHeight
   };
   lawPitchOutput = lawPitch.dataUpdated(inputPitch);
 
   // set output data
   outputData.elevatorPosition = lawPitchOutput.elevatorPosition;
+  outputData.elevatorTrimPosition = lawPitchOutput.elevatorTrimPosition;
 
   // ******************************************************************************************************************
 
@@ -143,7 +145,9 @@ void MainController::processData() {
   LawRoll::Input inputRoll = {
       aircraftData.bank,
       aircraftData.rollRateRadPerSecond,
-      inputControllerData.aileronPosition
+      inputControllerData.aileronPosition,
+      aircraftData.pitch,
+      inputAircraftData.radioHeight
   };
   lawRollOutput = lawRoll.dataUpdated(inputRoll);
 
@@ -177,6 +181,31 @@ void MainController::simConnectSetupAircraftData() const {
       nullptr,
       SIMCONNECT_DATATYPE_XYZ
   );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      0,
+      "INCIDENCE ALPHA",
+      "RADIANS"
+  );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      0,
+      "INCIDENCE BETA",
+      "RADIANS"
+  );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      0,
+      "RADIO HEIGHT",
+      "FEET"
+  );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      0,
+      "SIM ON GROUND",
+      "BOOL"
+  );
+
 }
 
 void MainController::simConnectSetupOutputData() const {
@@ -185,6 +214,12 @@ void MainController::simConnectSetupOutputData() const {
       1,
       "ELEVATOR POSITION",
       "POSITION"
+  );
+  SimConnect_AddToDataDefinition(
+      hSimConnect,
+      1,
+      "ELEVATOR TRIM POSITION",
+      "RADIANS"
   );
   SimConnect_AddToDataDefinition(
       hSimConnect,

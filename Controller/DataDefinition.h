@@ -7,6 +7,10 @@ struct InputAircraftData {
   double pitch;
   double bank;
   SIMCONNECT_DATA_XYZ worldRotationVelocity;
+  double incidenceAlpha;
+  double incidenceBeta;
+  double radioHeight;
+  bool isSimOnGround;
 };
 
 struct AircraftData {
@@ -27,5 +31,6 @@ struct InputControllerData {
 
 struct OutputData {
   double elevatorPosition;
+  double elevatorTrimPosition;
   double aileronPosition;
 };

@@ -141,7 +141,8 @@ void MainWindow::updateData(
   ui->pitchRate->updateActualDemand(aircraftData.pitchRateDegreePerSecond, lawPitchOutput.pitchRateDemand);
   ui->c_star->updateActualDemand(lawPitchOutput.cStar, lawPitchOutput.cStarDemand);
   ui->labelPitch->setText(QString::asprintf(
-      "C*c=%+4.2f C*=%+4.2f | nzc=%+4.2f nz=%+4.2f | PR=%+4.2f°/s | P=%+4.2f°",
+      "FMF=%+4.2f | C*c=%+4.2f C*=%+4.2f | nzc=%+4.2f nz=%+4.2f | PR=%+4.2f°/s | P=%+4.2f°",
+      lawPitchOutput.flightModeWeightFactor,
       lawPitchOutput.cStarDemand,
       lawPitchOutput.cStar,
       lawPitchOutput.loadDemand,
@@ -154,7 +155,8 @@ void MainWindow::updateData(
   ui->bank->updateActualDemand(aircraftData.bank, lawRollOutput.bankDemand);
   ui->rollRate->updateActualDemand(aircraftData.rollRateDegreePerSecond, lawRollOutput.rollRateDemand);
   ui->labelRoll->setText(QString::asprintf(
-      "Bc=%+4.2f° B=%+4.2f° | RRc=%+4.2f°/s RR=%+4.2f°/s | %+4.2f",
+      "FMF=%+4.2f | Bc=%+4.2f° B=%+4.2f° | RRc=%+4.2f°/s RR=%+4.2f°/s | %+4.2f",
+      lawRollOutput.flightModeWeightFactor,
       lawRollOutput.bankDemand,
       aircraftData.bank,
       lawRollOutput.rollRateDemand,

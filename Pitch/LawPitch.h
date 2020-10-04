@@ -3,6 +3,7 @@
 #include "Controller/DataDefinition.h"
 #include "PidController/pid.h"
 #include <cmath>
+#include <QDateTime>
 
 class LawPitch {
  public:
@@ -13,6 +14,7 @@ class LawPitch {
     double bank;
     double pitchRateRadPerSecond;
     double stickDeflection;
+    double radioHeightFeet;
   };
 
   struct Output {
@@ -22,6 +24,8 @@ class LawPitch {
     double loadDemand;
     double cStarDemand;
     double elevatorPosition;
+    double elevatorTrimPosition;
+    double flightModeWeightFactor;
   };
 
   LawPitch();
@@ -48,10 +52,20 @@ class LawPitch {
 
   PID pidController_cStar;
 
+  double overrideWeightFactor = 0.0;
   double directWeightFactor = 1.0;
+  double flightModeWeightFactor = 0.0;
+
+  QDateTime touchDownTime = QDateTime::currentDateTimeUtc();
 
   Input inputCurrent = {};
   Input inputLast = {};
   Output outputCurrent = {};
   Output outputLast = {};
+
+  static double limit(
+      double value,
+      double min,
+      double max
+  );
 };

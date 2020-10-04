@@ -5,7 +5,6 @@
 #include "Roll/LawRoll.h"
 
 #include <QMainWindow>
-#include <QDateTime>
 #include <Windows.h>
 
 QT_BEGIN_NAMESPACE
@@ -85,5 +84,4 @@ class MainWindow : public QMainWindow {
 
  private:
   Ui::MainWindow *ui;
-  QDateTime lastUpdateTime;
 };

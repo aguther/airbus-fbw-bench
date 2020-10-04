@@ -11,6 +11,8 @@ class LawRoll {
     double bank;
     double rollRateRadPerSecond;
     double stickDeflection;
+    double pitch;
+    double radioHeightFeet;
   };
 
   struct Output {
@@ -18,6 +20,7 @@ class LawRoll {
     double rollRateDemand;
     double rollRateDemandLimiter;
     double aileronPosition;
+    double flightModeWeightFactor;
   };
 
   LawRoll();
@@ -45,7 +48,8 @@ class LawRoll {
   double DEG_TO_RAD = PI / 180.0;
   double RAD_TO_DEG = 180 / PI;
 
-  double directWeightFactor = 1.0;
+  double overrideWeightFactor = 0.0;
+  double flightModeWeightFactor = 0.0;
 
   double k_xi_phi = 0.0;
   double j_xi_phi = -0.2;

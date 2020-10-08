@@ -15,6 +15,7 @@ class LawPitch {
     double pitchRateRadPerSecond;
     double stickDeflection;
     double radioHeightFeet;
+    double groundSpeed;
   };
 
   struct Output {

@@ -10,7 +10,7 @@ struct InputAircraftData {
   double incidenceAlpha;
   double incidenceBeta;
   double radioHeight;
-  bool isSimOnGround;
+  double groundSpeedKnots;
 };
 
 struct AircraftData {

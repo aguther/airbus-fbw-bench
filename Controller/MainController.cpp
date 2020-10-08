@@ -131,7 +131,8 @@ void MainController::processData() {
       aircraftData.bank,
       aircraftData.pitchRateRadPerSecond,
       inputControllerData.elevatorPosition,
-      inputAircraftData.radioHeight
+      inputAircraftData.radioHeight,
+      inputAircraftData.groundSpeedKnots
   };
   lawPitchOutput = lawPitch.dataUpdated(inputPitch);
 
@@ -202,8 +203,8 @@ void MainController::simConnectSetupAircraftData() const {
   SimConnect_AddToDataDefinition(
       hSimConnect,
       0,
-      "SIM ON GROUND",
-      "BOOL"
+      "GROUND VELOCITY",
+      "KNOTS"
   );
 
 }

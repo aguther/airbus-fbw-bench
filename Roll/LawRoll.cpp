@@ -31,7 +31,7 @@ LawRoll::Output LawRoll::dataUpdated(
   inputCurrent = input;
 
   // update flight mode weight
-  if (inputCurrent.radioHeightFeet > 0.0) {
+  if (inputCurrent.radioHeightFeet > 9.0) {
     // transition to flight mode
     if ((flightModeWeightFactor < 1.0 && inputCurrent.pitch > 8.0) || inputCurrent.radioHeightFeet > 400.0) {
       flightModeWeightFactor = limit(

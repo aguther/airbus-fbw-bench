@@ -32,7 +32,7 @@ LawPitch::Output LawPitch::dataUpdated(
   }
 
   // update flight mode weight
-  if (inputCurrent.radioHeightFeet > 0.0) {
+  if (inputCurrent.radioHeightFeet > 9.0) {
     // transition to flight mode
     if ((flightModeWeightFactor < 1.0 && inputCurrent.pitch > 8.0) || inputCurrent.radioHeightFeet > 400.0) {
       flightModeWeightFactor = limit(
@@ -74,6 +74,16 @@ LawPitch::Output LawPitch::dataUpdated(
       -1.0,
       +2.5
   );
+
+  // calculate pitch rate demand
+  if (inputCurrent.groundSpeed > 0.0) {
+    outputCurrent.pitchRateDemand = RAD_TO_DEG * (
+        (outputCurrent.loadDemand * 9.81 - cos(inputCurrent.pitch * DEG_TO_RAD) * 9.81)
+            / (inputCurrent.groundSpeed / 1.825)
+    );
+  } else {
+    outputCurrent.pitchRateDemand = 0.0;
+  }
 
   // calculate C* rule
   outputCurrent.cStarDemand = 3.0 * inputCurrent.stickDeflection * pitchBankCompensation;

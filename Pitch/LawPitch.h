@@ -46,10 +46,11 @@ class LawPitch {
   );
 
  private:
-  double SAMPLE_TIME = 0.03;
-  double PI = 2 * acos(0.0);
-  double DEG_TO_RAD = PI / 180.0;
-  double RAD_TO_DEG = 180 / PI;
+  const double SAMPLE_TIME = 0.03;
+  const double PI = 2 * acos(0.0);
+  const double DEG_TO_RAD = PI / 180.0;
+  const double RAD_TO_DEG = 180 / PI;
+  const double C_STAR_FACTOR = 121.92 / 9.81;
 
   PID pidController_cStar;
 

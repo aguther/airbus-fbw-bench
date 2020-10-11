@@ -1,3 +1,4 @@
+#include <iostream>
 #include "LawPitch.h"
 
 LawPitch::LawPitch()
@@ -63,17 +64,18 @@ LawPitch::Output LawPitch::dataUpdated(
 
   // calculate needed variables
   outputCurrent.gForceDelta = inputCurrent.gForce - inputLast.gForce;
-  outputCurrent.cStar = outputCurrent.gForceDelta + ((240 / 9.81) * inputCurrent.pitchRateRadPerSecond);
+  outputCurrent.cStar = inputCurrent.gForce + inputCurrent.pitchRateRadPerSecond * C_STAR_FACTOR;
 
   // correction factor
   double pitchBankCompensation = (cos(inputCurrent.pitch * DEG_TO_RAD) / cos(inputCurrent.bank * DEG_TO_RAD));
 
   // calculate load demand depending on sidestick position
-  outputCurrent.loadDemand = limit(
-      1 + (2.0 * inputCurrent.stickDeflection * pitchBankCompensation),
-      -1.0,
-      +2.5
-  );
+  outputCurrent.loadDemand = inputCurrent.stickDeflection >= 0
+                             ? inputCurrent.stickDeflection * 1.5
+                             : inputCurrent.stickDeflection * 2.0;
+  outputCurrent.loadDemand += 1.0;
+  outputCurrent.loadDemand *= pitchBankCompensation;
+  outputCurrent.loadDemand = limit(outputCurrent.loadDemand, -1.0, +2.5);
 
   // calculate pitch rate demand
   if (inputCurrent.groundSpeed > 0.0) {
@@ -86,7 +88,7 @@ LawPitch::Output LawPitch::dataUpdated(
   }
 
   // calculate C* rule
-  outputCurrent.cStarDemand = 3.0 * inputCurrent.stickDeflection * pitchBankCompensation;
+  outputCurrent.cStarDemand = outputCurrent.loadDemand;//3.0 * inputCurrent.stickDeflection * pitchBankCompensation;
 
   // feed pid controller for pitch rate -> elevator position
   outputCurrent.elevatorPosition = pidController_cStar.calculate(

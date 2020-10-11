@@ -5,9 +5,8 @@ MainWindow::MainWindow(
     QWidget *parent
 ) : QMainWindow(parent), ui(new Ui::MainWindow) {
   ui->setupUi(this);
-  ui->loadFactor->setRangeY(-0.5, 2.5);
-  ui->pitchRate->setRangeY(-15.0, 15.0);
-  ui->c_star->setRangeY(-3.0, 3.0);
+  ui->c_star->setRangeY(-1.0, 3.0);
+  ui->pitchRate->setRangeY(-5.0, 5.0);
 
   ui->bank->setRangeY(-67.0, 67.0);
   ui->rollRate->setRangeY(-15.0, 15.0);
@@ -137,9 +136,8 @@ void MainWindow::updateData(
   ));
 
   // pitch
-  ui->loadFactor->updateActualDemand(aircraftData.gForce, lawPitchOutput.loadDemand);
-  ui->pitchRate->updateActualDemand(aircraftData.pitchRateDegreePerSecond, lawPitchOutput.pitchRateDemand);
   ui->c_star->updateActualDemand(lawPitchOutput.cStar, lawPitchOutput.cStarDemand);
+  ui->pitchRate->updateActualDemand(aircraftData.pitchRateDegreePerSecond, lawPitchOutput.pitchRateDemand);
   ui->labelPitch->setText(QString::asprintf(
       "FMF=%+4.2f | C*c=%+4.2f C*=%+4.2f | nzc=%+4.2f nz=%+4.2f | PR=%+4.2f°/s | P=%+4.2f°",
       lawPitchOutput.flightModeWeightFactor,

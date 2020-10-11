@@ -55,7 +55,7 @@ class LawRoll {
   double j_xi_phi = -0.2;
   double h_xi_phi = 0.0;
   double k_xi_p = -5.0;
-  double phi_d_integral = 0.0;
+  //double phi_d_integral = 0.0;
 
   Input inputCurrent = {};
   Input inputLast = {};

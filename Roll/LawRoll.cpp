@@ -84,8 +84,8 @@ LawRoll::Output LawRoll::dataUpdated(
   double phi_c = outputCurrent.bankDemand;
   double phi_d = phi - phi_c;
 
-  phi_d_integral += phi_d;
-  phi_d_integral = limit(phi_d_integral, -1.0, 1.0);
+//  phi_d_integral += phi_d;
+//  phi_d_integral = limit(phi_d_integral, -1.0, 1.0);
 
   // calculate output
   double xi = (phi_c * h_xi_phi) + (phi_d * k_xi_phi) + (phi_d * j_xi_phi) + (p_k * k_xi_p);

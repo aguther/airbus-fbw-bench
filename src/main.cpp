@@ -40,34 +40,6 @@ int main(
       &MainController::stop
   );
 
-  QObject::connect(
-      &mainWindow,
-      &MainWindow::inputMaskingChanged,
-      &mainController,
-      &MainController::inputMaskingChanged
-  );
-
-  QObject::connect(
-      &mainWindow,
-      &MainWindow::weightFactorChanged,
-      &mainController,
-      &MainController::weightFactorChanged
-  );
-
-  QObject::connect(
-      &mainWindow,
-      &MainWindow::pitchParametersChanged,
-      &mainController,
-      &MainController::pitchParametersChanged
-  );
-
-  QObject::connect(
-      &mainWindow,
-      &MainWindow::rollParametersChanged,
-      &mainController,
-      &MainController::rollParametersChanged
-  );
-
   // execute
   int result = QApplication::exec();
 

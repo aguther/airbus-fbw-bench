@@ -11,9 +11,9 @@ MainWindow::MainWindow(
   ui->bank->setRangeY(-67.0, 67.0);
   ui->rollRate->setRangeY(-15.0, 15.0);
 
-  ui->statusbar->setFont(QFont("Cascadia Code", 9));
-  ui->labelPitch->setFont(QFont("Cascadia Code", 9));
-  ui->labelRoll->setFont(QFont("Cascadia Code", 9));
+  ui->statusbar->setFont(QFont("Consolas", 9));
+  ui->labelPitch->setFont(QFont("Consolas", 9));
+  ui->labelRoll->setFont(QFont("Consolas", 9));
 
   QObject::connect(
       ui->pushButtonConnect,

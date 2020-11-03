@@ -4,28 +4,21 @@ include_directories(
         "${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
-file(
-        STRINGS
-        src/defines.txt
-        MODEL_DEFINES
-)
-
 add_compile_definitions(
         _CONSOLE
         _WIN32_WINNT=0x0501
         NDEBUG
         NOGDI
         WIN32_LEAN_AND_MEAN
-        ${MODEL_DEFINES}
 )
 
 add_library(
         model STATIC
-        src/fbw.cpp
-        src/fbw.h
-        src/fbw_data.cpp
-        src/fbw_private.h
-        src/fbw_types.h
+        src/FlyByWire.cpp
+        src/FlyByWire.h
+        src/FlyByWire_data.cpp
+        src/FlyByWire_private.h
+        src/FlyByWire_types.h
         src/rt_nonfinite.cpp
         src/rt_nonfinite.h
         src/rtGetInf.cpp

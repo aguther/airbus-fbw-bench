@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 #include <Windows.h>
-#include <fbw.h>
+#include <FlyByWire.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,7 +22,7 @@ class MainWindow : public QMainWindow {
   void buttonConnectClicked();
 
   void updateData(
-      ExternalOutputs_fbw_T data,
+      ExternalOutputs_FlyByWire_T data,
       double updateTime);
 
   signals:

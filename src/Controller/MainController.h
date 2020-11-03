@@ -10,7 +10,7 @@
 #include <QDateTime>
 #include <QThread>
 
-#include <fbw.h>
+#include <FlyByWire.h>
 
 class MainController : public QObject {
  Q_OBJECT
@@ -28,7 +28,7 @@ class MainController : public QObject {
   void simConnectFailed();
 
   void dataUpdated(
-      ExternalOutputs_fbw_T data,
+      ExternalOutputs_FlyByWire_T data,
       double updateTime
   );
 
@@ -47,7 +47,7 @@ class MainController : public QObject {
   QTimer *updateTimer = nullptr;
   QDateTime lastUpdateTime;
 
-  fbwModelClass model;
+  FlyByWireModelClass model;
 
   std::shared_ptr<simconnect::toolbox::connection::SimConnectDataDefinition> dataDefinitionRead;
   std::shared_ptr<simconnect::toolbox::connection::SimConnectDataDefinition> dataDefinitionWrite;

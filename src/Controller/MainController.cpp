@@ -108,38 +108,37 @@ void MainController::update() {
 
   // read data
   simConnectInterfaceRead.readData();
-  model.fbw_U.in_sim_simrawdata_nz_g
+  model.FlyByWire_U.in.data.nz_g
       = any_cast<double>(simConnectDataRead->get(0));
 
-  model.fbw_U.in_sim_simrawdata_Theta_deg
+  model.FlyByWire_U.in.data.Theta_deg
       = any_cast<double>(simConnectDataRead->get(1));
 
-  model.fbw_U.in_sim_simrawdata_Phi_deg
+  model.FlyByWire_U.in.data.Phi_deg
       = any_cast<double>(simConnectDataRead->get(2));
 
   SIMCONNECT_DATA_XYZ worldRotationVelocity
       = any_cast<SIMCONNECT_DATA_XYZ>(simConnectDataRead->get(3));
-  model.fbw_U.in_sim_simrawdata_qk_rad_s = worldRotationVelocity.x;
-  model.fbw_U.in_sim_simrawdata_rk_rad_s = worldRotationVelocity.y;
-  model.fbw_U.in_sim_simrawdata_pk_rad_s = worldRotationVelocity.z;
+  model.FlyByWire_U.in.data.qk_rad_s = worldRotationVelocity.x;
+  model.FlyByWire_U.in.data.rk_rad_s = worldRotationVelocity.y;
+  model.FlyByWire_U.in.data.pk_rad_s = worldRotationVelocity.z;
 
-  model.fbw_U.in_sim_simrawdata_Vk_kt
+  model.FlyByWire_U.in.data.Vk_kt
       = any_cast<double>(simConnectDataRead->get(4));
 
-  model.fbw_U.in_sim_simrawdata_radio_height_ft
+  model.FlyByWire_U.in.data.radio_height_ft
       = any_cast<double>(simConnectDataRead->get(5));
 
-  model.fbw_U.in_sim_simrawdata_CG_percent_MAC
+  model.FlyByWire_U.in.data.CG_percent_MAC
       = any_cast<double>(simConnectDataRead->get(6));
 
   // ******************************************************************************************************************
 
   // read inputs
   simConnectInterfaceInput.readData();
-  model.fbw_U.in_sim_simrawinput_delta_eta_pos
+  model.FlyByWire_U.in.input.delta_eta_pos
       = any_cast<double>(simConnectDataInput->get(0));
-  model.fbw_U.in_sim_simrawinput_delta_xi_pos
-      = any_cast<double>(simConnectDataInput->get(1));
+  model.FlyByWire_U.in.input.delta_xi_pos = any_cast<double>(simConnectDataInput->get(1));
 
   // ******************************************************************************************************************
 
@@ -149,9 +148,9 @@ void MainController::update() {
   // ******************************************************************************************************************
 
   // get model result and prepare data structure to write
-  simConnectDataWrite->set(0, model.fbw_Y.out_sim_simrawoutput_eta_pos);
-  simConnectDataWrite->set(1, model.fbw_Y.out_sim_simrawoutput_iH_deg);
-  simConnectDataWrite->set(2, model.fbw_Y.out_sim_simrawoutput_xi_pos);
+  simConnectDataWrite->set(0, model.FlyByWire_Y.out.sim.raw.output.eta_pos);
+  simConnectDataWrite->set(1, model.FlyByWire_Y.out.sim.raw.output.iH_deg);
+  simConnectDataWrite->set(2, model.FlyByWire_Y.out.sim.raw.output.xi_pos);
 
   // set output data
   simConnectInterfaceWrite.sendData();
@@ -160,7 +159,7 @@ void MainController::update() {
 
   // fire signal that data was updated
   emit dataUpdated(
-      model.fbw_Y,
+      model.FlyByWire_Y,
       updateTime
   );
 }

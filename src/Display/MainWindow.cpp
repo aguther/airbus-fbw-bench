@@ -40,7 +40,7 @@ void MainWindow::buttonConnectClicked() {
 }
 
 void MainWindow::updateData(
-    ExternalOutputs_fbw_T data,
+    ExternalOutputs_FlyByWire_T data,
     double updateTime
 ) {
   // common
@@ -50,27 +50,27 @@ void MainWindow::updateData(
   ));
 
   // pitch
-  ui->c_star->updateActualDemand(data.out_pitch_pitchnormal_Cstar_g, data.out_pitch_pitchnormal_Cstar_c_g);
-  ui->pitchRate->updateActualDemand(data.out_sim_simdata_qk_deg_s, 0);
+  ui->c_star->updateActualDemand(data.out.pitch.law_normal.Cstar_g, data.out.pitch.law_normal.Cstar_c_g);
+  ui->pitchRate->updateActualDemand(data.out.sim.data.qk_deg_s, 0);
   ui->labelPitch->setText(QString::asprintf(
       "FMF=%+4.2f | C*c=%+4.2f C*=%+4.2f | nz=%+4.2f | PR=%+4.2f°/s | P=%+4.2f°",
-      data.out_pitch_pitchdatacomputed_in_flight_gain,
-      data.out_pitch_pitchnormal_Cstar_c_g,
-      data.out_pitch_pitchnormal_Cstar_g,
-      data.out_sim_simdata_nz_g,
-      data.out_sim_simdata_pk_deg_s,
-      data.out_sim_simdata_Theta_deg
+      data.out.pitch.data_computed.in_flight_gain,
+      data.out.pitch.law_normal.Cstar_c_g,
+      data.out.pitch.law_normal.Cstar_g,
+      data.out.sim.data.nz_g,
+      data.out.sim.data.pk_deg_s,
+      data.out.sim.data.Theta_deg
   ));
 
   // roll
-  ui->bank->updateActualDemand(data.out_sim_simdata_Phi_deg, data.out_roll_rollnormal_Phi_c_deg);
-  ui->rollRate->updateActualDemand(data.out_sim_simdata_pk_deg_s, data.out_roll_rollnormal_pk_c_deg_s);
+  ui->bank->updateActualDemand(data.out.sim.data.Phi_deg, data.out.roll.law_normal.Phi_c_deg);
+  ui->rollRate->updateActualDemand(data.out.sim.data.pk_deg_s, data.out.roll.law_normal.pk_c_deg_s);
   ui->labelRoll->setText(QString::asprintf(
       "FMF=%+4.2f | Bc=%+4.2f° B=%+4.2f° | RRc=%+4.2f°/s RR=%+4.2f°/s",
-      data.out_roll_rolldatacomputed_in_flight_gain,
-      data.out_roll_rollnormal_Phi_c_deg,
-      data.out_sim_simdata_Phi_deg,
-      data.out_roll_rollnormal_pk_c_deg_s,
-      data.out_sim_simdata_pk_deg_s
+      data.out.roll.data_computed.in_flight_gain,
+      data.out.roll.law_normal.Phi_c_deg,
+      data.out.sim.data.Phi_deg,
+      data.out.roll.law_normal.pk_c_deg_s,
+      data.out.sim.data.pk_deg_s
   ));
 }
